@@ -1,5 +1,6 @@
 package dev.zenqrt.mso.tntrun.game.state;
 
+import dev.zenqrt.mso.game.state.GameState;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 

@@ -1,6 +1,5 @@
 package dev.zenqrt.mso.tntrun.game;
 
-import dev.zenqrt.mso.tntrun.game.state.GameState;
 import dev.zenqrt.mso.tntrun.map.TNTRunConfig;
 import net.minestom.server.instance.Instance;
 

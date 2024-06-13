@@ -1,6 +1,6 @@
-package dev.zenqrt.mso.tntrun.game.state;
+package dev.zenqrt.mso.game.state;
 
-public abstract class GameState {
+public class GameState {
 
     private boolean active;
 
