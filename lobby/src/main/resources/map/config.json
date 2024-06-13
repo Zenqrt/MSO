@@ -1,0 +1,135 @@
+{
+  "podium_placements": [
+    {
+      "npc_position": {
+        "x": 0.5,
+        "y": 103,
+        "z": 9.5,
+        "yaw": 180,
+        "pitch": 0
+      },
+      "label_position": {
+        "x": 0.5,
+        "y": 102.3,
+        "z": 7.99,
+        "yaw": 180,
+        "pitch": 0
+      }
+    },
+    {
+      "npc_position": {
+        "x": 5.5,
+        "y": 102,
+        "z": 9.5,
+        "yaw": 180,
+        "pitch": 0
+      },
+      "label_position": {
+        "x": 5.5,
+        "y": 101.3,
+        "z": 7.99,
+        "yaw": 180,
+        "pitch": 0
+      }
+    },
+    {
+      "npc_position": {
+        "x": -4.5,
+        "y": 101,
+        "z": 9.5,
+        "yaw": 180,
+        "pitch": 0
+      },
+      "label_position": {
+          "x": -4.5,
+          "y": 100.3,
+          "z": 7.99,
+          "yaw": 180,
+          "pitch": 0
+      }
+    }
+  ],
+  "dungeon_settings": {
+    "selectors": [
+      {
+        "display_position": {
+          "x": 6,
+          "y": 99,
+          "z": -6
+        },
+        "top_button_position": {
+          "x": 6,
+          "y": 100,
+          "z": -8
+        },
+        "bottom_button_position": {
+          "x": 6,
+          "y": 98,
+          "z": -8
+        }
+      },
+      {
+        "display_position": {
+          "x": 5,
+          "y": 99,
+          "z": -6
+        },
+        "top_button_position": {
+          "x": 5,
+          "y": 100,
+          "z": -8
+        },
+        "bottom_button_position": {
+          "x": 5,
+          "y": 98,
+          "z": -8
+        }
+      },
+      {
+        "display_position": {
+          "x": 4,
+          "y": 99,
+          "z": -6
+        },
+        "top_button_position": {
+          "x": 4,
+          "y": 100,
+          "z": -8
+        },
+        "bottom_button_position": {
+          "x": 4,
+          "y": 98,
+          "z": -8
+        }
+      }
+    ],
+    "entrance_door": {
+      "bottom_position": {
+        "x": 8,
+        "y": 98,
+        "z": -9
+      },
+      "top_position": {
+        "x": 8,
+        "y": 99,
+        "z": -9
+      }
+    }
+  },
+  "rainbow_man_settings": {
+    "npc_position": {
+      "x": 10.5,
+      "y": 96,
+      "z": -1.5,
+      "yaw": 180,
+      "pitch": 0
+    },
+    "sheep_position": {
+        "x": 9.5,
+        "y": 96,
+        "z": -1.5,
+        "yaw": 180,
+        "pitch": 0
+    }
+  }
+}
