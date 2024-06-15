@@ -1,11 +1,10 @@
 package dev.zenqrt.mso.proxy.game;
 
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import dev.zenqrt.mso.game.state.GameState;
 import dev.zenqrt.mso.proxy.MSOProxy;
-import dev.zenqrt.mso.proxy.game.player.GamePlayer;
-import dev.zenqrt.mso.proxy.game.player.GamePlayerList;
-import dev.zenqrt.mso.proxy.game.player.GamePlayerListImpl;
-import dev.zenqrt.mso.proxy.game.state.GameState;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayerList;
 import dev.zenqrt.mso.proxy.game.state.states.ActiveGameState;
 import dev.zenqrt.mso.proxy.game.state.states.IntermissionGameState;
 import dev.zenqrt.mso.proxy.leaderboard.Leaderboard;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public final class MSOGame extends GameState {
 
-    private final GamePlayerList playerList;
+    private final MSOGamePlayerList playerList;
     private final RegisteredServer lobbyServer;
     private final MSOTournamentGame[] games;
     private final Leaderboard leaderboard;
@@ -27,13 +26,13 @@ public final class MSOGame extends GameState {
     private GameState state;
 
     public MSOGame(MSOProxy plugin, RegisteredServer lobbyServer, MSOTournamentGame[] games) {
-        this.playerList = new GamePlayerListImpl(this);
+        this.playerList = new MSOGamePlayerList(this);
         this.lobbyServer = lobbyServer;
         this.games = games;
         this.leaderboard = new Leaderboard(3, playerList, (gamePlayers, places) -> gamePlayers.stream()
-                .sorted(Comparator.comparingInt(GamePlayer::score))
+                .sorted(Comparator.comparingInt(MSOGamePlayer::score))
                 .limit(places)
-                .toArray(GamePlayer[]::new));
+                .toArray(MSOGamePlayer[]::new));
         this.currentGame = games[0];
 
         this.states = new ArrayList<>();
@@ -43,7 +42,7 @@ public final class MSOGame extends GameState {
             states.add(new ActiveGameState(plugin, this, tournamentGame));
         }
 
-        this.state = states.get(0);
+        this.state = states.getFirst();
     }
 
     @Override
@@ -51,7 +50,7 @@ public final class MSOGame extends GameState {
         state.start();
     }
 
-    public GamePlayerList getPlayerList() {
+    public MSOGamePlayerList getPlayerList() {
         return playerList;
     }
 

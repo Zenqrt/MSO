@@ -1,39 +1,29 @@
 package dev.zenqrt.mso.tntrun;
 
+import dev.zenqrt.mso.game.MinestomGameServer;
+import dev.zenqrt.mso.tntrun.game.TNTRunGame;
+import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayer;
+import dev.zenqrt.mso.tntrun.map.TNTRunConfig;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.GameMode;
-import net.minestom.server.entity.Player;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
-import net.minestom.server.extras.MojangAuth;
-import net.minestom.server.instance.Instance;
-import net.minestom.server.instance.anvil.AnvilLoader;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.util.Objects;
 
 public final class TNTRun {
 
-    @SuppressWarnings("UnstableApiUsage")
-    public static void main(String[] args) throws URISyntaxException {
-        MinecraftServer server = MinecraftServer.init();
-        MojangAuth.init();
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        MinestomGameServer server = MinestomGameServer.init();
 
-        URL worldUrl = Objects.requireNonNull(TNTRun.class.getClassLoader().getResource("map/world"), "world folder");
-        Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
-        instance.setGenerator(_ -> {});
+        MinecraftServer.setBrandName("§a1§e2§c3§r");
 
-        MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
-            event.setSpawningInstance(instance);
+        TNTRunGame game = new TNTRunGame(server.getInstance(), new TNTRunConfig(server.getConfigJson()));
+        game.start();
 
-            Player player = event.getPlayer();
-            player.setRespawnPoint(new Pos(0.5, 101, 0.5));
-            player.setGameMode(GameMode.ADVENTURE);
-        });
+        MinecraftServer.getGlobalEventHandler().addListener(PlayerSpawnEvent.class, event ->
+                game.getPlayerList().addPlayer(new TNTRunPlayer(event.getPlayer().getUuid(), event.getPlayer(), 0)));
 
-        server.start("127.0.0.1", 25566);
+        server.start(25566);
     }
 
 }

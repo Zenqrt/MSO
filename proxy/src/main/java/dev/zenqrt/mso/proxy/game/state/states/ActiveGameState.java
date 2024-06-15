@@ -5,13 +5,13 @@ import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import dev.zenqrt.mso.messages.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
-import dev.zenqrt.mso.proxy.game.player.GamePlayer;
-import dev.zenqrt.mso.proxy.game.player.GamePlayerList;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayerList;
 import dev.zenqrt.mso.proxy.game.state.EventGameState;
-import dev.zenqrt.mso.proxy.messages.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.utils.ConnectionUtils;
 
 import java.util.UUID;
@@ -46,25 +46,25 @@ public final class ActiveGameState extends EventGameState {
     @SuppressWarnings("UnstableApiUsage")
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        if (event.getIdentifier().equals(ChannelIdentifiers.GAME_TRANSFER)) {
+        if (event.getIdentifier().equals(MinecraftChannelIdentifier.from(ChannelIdentifiers.GAME_TRANSFER))) {
             if (getDataInput(event).readLine().equals("next_state"))
                 game.switchToNextState();
         } else if (event.getIdentifier().equals(UPDATE)) {
             ByteArrayDataInput input = getDataInput(event);
-            GamePlayerList playerList = game.getPlayerList();
+            MSOGamePlayerList playerList = game.getPlayerList();
 
             for (String uuidString = input.readLine(); uuidString != null; uuidString = input.readLine()) {
-                GamePlayer gamePlayer = playerList.getPlayer(UUID.fromString(uuidString));
+                MSOGamePlayer gamePlayer = playerList.getPlayer(UUID.fromString(uuidString));
                 int pointsEarned = input.readInt();
 
                 playerList.updatePlayer(gamePlayer.addScore(pointsEarned));
             }
 
             game.getLeaderboard().update();
-            game.getLobbyServer().sendPluginMessage(ChannelIdentifiers.INFO, output -> {
+            game.getLobbyServer().sendPluginMessage(MinecraftChannelIdentifier.from(ChannelIdentifiers.INFO), output -> {
                 output.writeUTF("scores");
 
-                for (GamePlayer topPlayer : game.getLeaderboard().getTopPlayers()) {
+                for (MSOGamePlayer topPlayer : game.getLeaderboard().getTopPlayers()) {
                     output.writeUTF(topPlayer.uuid().toString());
                     output.writeInt(topPlayer.score());
                 }

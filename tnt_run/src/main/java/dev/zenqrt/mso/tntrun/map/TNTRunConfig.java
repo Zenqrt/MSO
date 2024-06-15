@@ -1,5 +1,11 @@
 package dev.zenqrt.mso.tntrun.map;
 
-import net.minestom.server.coordinate.Pos;
+import com.google.gson.JsonObject;
 
-public record TNTRunConfig(Pos spawnPosition, int bottomYLevel) {}
+public record TNTRunConfig(int bottomYLevel) {
+
+    public TNTRunConfig(JsonObject jsonObject) {
+        this(jsonObject.get("bottom_y_level").getAsInt());
+    }
+
+}

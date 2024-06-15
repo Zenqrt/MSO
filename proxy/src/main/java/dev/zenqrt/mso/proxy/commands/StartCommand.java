@@ -3,7 +3,7 @@ package dev.zenqrt.mso.proxy.commands;
 import com.velocitypowered.api.command.BrigadierCommand;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.state.states.IntermissionGameState;
-import dev.zenqrt.mso.proxy.utils.text.Messages;
+import dev.zenqrt.mso.text.Messages;
 
 public final class StartCommand {
 

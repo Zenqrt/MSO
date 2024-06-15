@@ -4,7 +4,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.zenqrt.mso.proxy.utils.text.Messages;
+import dev.zenqrt.mso.text.Messages;
 
 import java.util.Optional;
 

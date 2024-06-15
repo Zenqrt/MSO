@@ -1,23 +1,47 @@
 package dev.zenqrt.mso.tntrun.game;
 
+import dev.zenqrt.mso.game.MinestomGame;
+import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayer;
+import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayerList;
+import dev.zenqrt.mso.tntrun.game.states.RunningGameState;
+import dev.zenqrt.mso.tntrun.game.states.CountdownGameState;
 import dev.zenqrt.mso.tntrun.map.TNTRunConfig;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.instance.Instance;
 
-public final class TNTRunGame extends GameState {
+public final class TNTRunGame extends MinestomGame {
 
-    private final Instance instance;
-    private final TNTRunConfig config;
+    private final EventNode<Event> eventNode = EventNode.all("tnt_run");
+    private final TNTRunPlayerList playerList;
 
     public TNTRunGame(Instance instance, TNTRunConfig config) {
-        this.instance = instance;
-        this.config = config;
+        super(instance);
+
+        this.playerList = new TNTRunPlayerList(this);
+
+        TNTRunPlayer[] topPlayers = new TNTRunPlayer[3];
+
+        this.addState(new CountdownGameState(this));
+        this.addState(new RunningGameState(eventNode, this, config, topPlayers, getScoreKeeper()));
     }
 
-    public Instance getInstance() {
-        return instance;
+    @Override
+    protected void onStateStart() {
+        super.onStateStart();
+
+        MinecraftServer.getGlobalEventHandler().addChild(eventNode);
     }
 
-    public TNTRunConfig getConfig() {
-        return config;
+    @Override
+    protected void onStateEnd() {
+        super.onStateEnd();
+
+        MinecraftServer.getGlobalEventHandler().removeChild(eventNode);
+    }
+
+    public TNTRunPlayerList getPlayerList() {
+        return playerList;
     }
 }

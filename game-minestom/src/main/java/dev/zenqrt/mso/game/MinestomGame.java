@@ -1,0 +1,45 @@
+package dev.zenqrt.mso.game;
+
+import dev.zenqrt.mso.game.messages.PluginMessageFactory;
+import dev.zenqrt.mso.game.score.ScoreKeeper;
+import dev.zenqrt.mso.game.state.GameStateSequence;
+import dev.zenqrt.mso.messages.ChannelIdentifiers;
+import net.minestom.server.MinecraftServer;
+import net.minestom.server.instance.Instance;
+import net.minestom.server.timer.TaskSchedule;
+
+public class MinestomGame extends GameStateSequence {
+
+    private final Instance instance;
+    private final ScoreKeeper scoreKeeper;
+
+    public MinestomGame(Instance instance) {
+        this.instance = instance;
+        this.scoreKeeper =  new ScoreKeeper();
+    }
+
+    @Override
+    protected void onStateEnd() {
+        super.onStateEnd();
+
+        MinecraftServer.getConnectionManager().getOnlinePlayers().stream()
+                .findFirst()
+                .ifPresentOrElse(player -> player.sendPluginMessage(ChannelIdentifiers.GAME_TRANSFER, PluginMessageFactory.gameEndScores(scoreKeeper)),
+                        () -> { throw new RuntimeException("Unable to send plugin message while no players are online"); });
+
+        MinecraftServer.getSchedulerManager().scheduleTask(() -> {
+            if (!MinecraftServer.getConnectionManager().getOnlinePlayers().isEmpty())
+                return;
+
+            MinecraftServer.stopCleanly();
+        }, TaskSchedule.seconds(1), TaskSchedule.seconds(3));
+    }
+
+    public Instance getInstance() {
+        return instance;
+    }
+
+    protected ScoreKeeper getScoreKeeper() {
+        return scoreKeeper;
+    }
+}

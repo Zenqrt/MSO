@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.Player;
+import dev.zenqrt.mso.messages.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.exception.PluginMessageException;
 import dev.zenqrt.mso.proxy.game.MSOGame;
@@ -22,7 +23,7 @@ public final class ServerTransferHandler {
     @SuppressWarnings("UnstableApiUsage")
     @Subscribe
     public void onPluginMessageFromPlayer(PluginMessageEvent event) {
-        if (!(event.getSource() instanceof Player player && event.getIdentifier() == ChannelIdentifiers.GAME_TRANSFER))
+        if (!(event.getSource() instanceof Player player && event.getIdentifier().getId().equals(ChannelIdentifiers.GAME_TRANSFER)))
             return;
 
         ByteArrayDataInput input = ByteStreams.newDataInput(event.getData());

@@ -44,7 +44,7 @@ public final class MSOLobby {
 
         URL worldUrl = Objects.requireNonNull(MSOLobby.class.getClassLoader().getResource("map/world"), "world folder");
         Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
-        instance.setGenerator(unit -> {});
+        instance.setGenerator(_ -> {});
 
         MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
             event.setSpawningInstance(instance);

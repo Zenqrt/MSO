@@ -26,23 +26,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.Minestom</groupId>
-            <artifactId>Minestom</artifactId>
-            <version>-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.6</version>
+            <groupId>dev.zenqrt.mso</groupId>
+            <artifactId>game-minestom</artifactId>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>dev.zenqrt.mso</groupId>
-            <artifactId>common-game</artifactId>
+            <artifactId>mso-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

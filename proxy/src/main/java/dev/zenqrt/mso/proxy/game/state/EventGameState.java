@@ -1,6 +1,7 @@
 package dev.zenqrt.mso.proxy.game.state;
 
 import com.velocitypowered.api.event.EventManager;
+import dev.zenqrt.mso.game.state.GameState;
 import dev.zenqrt.mso.proxy.MSOProxy;
 
 public class EventGameState extends GameState {

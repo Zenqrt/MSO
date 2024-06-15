@@ -11,8 +11,10 @@
     <modules>
         <module>proxy</module>
         <module>lobby</module>
-        <module>common-game</module>
+        <module>game-common</module>
         <module>tnt_run</module>
+        <module>game-minestom</module>
+        <module>mso-common</module>
     </modules>
 
     <properties>

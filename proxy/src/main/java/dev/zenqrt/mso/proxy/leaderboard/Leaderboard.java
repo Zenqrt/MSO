@@ -1,24 +1,25 @@
 package dev.zenqrt.mso.proxy.leaderboard;
 
-import dev.zenqrt.mso.proxy.game.player.GamePlayer;
-import dev.zenqrt.mso.proxy.game.player.GamePlayerList;
+import dev.zenqrt.mso.game.leaderboard.LeaderboardCalculator;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayerList;
 
 public final class Leaderboard {
 
     private final int maxPlaces;
-    private final GamePlayerList playerList;
-    private final LeaderboardCalculator leaderboardCalculator;
-    private final GamePlayer[] topPlayers;
+    private final MSOGamePlayerList playerList;
+    private final LeaderboardCalculator<MSOGamePlayer> leaderboardCalculator;
+    private final MSOGamePlayer[] topPlayers;
 
-    public Leaderboard(int maxPlaces, GamePlayerList playerList, LeaderboardCalculator leaderboardCalculator) {
+    public Leaderboard(int maxPlaces, MSOGamePlayerList playerList, LeaderboardCalculator<MSOGamePlayer> leaderboardCalculator) {
         this.maxPlaces = maxPlaces;
         this.playerList = playerList;
         this.leaderboardCalculator = leaderboardCalculator;
-        this.topPlayers = new GamePlayer[maxPlaces];
+        this.topPlayers = new MSOGamePlayer[maxPlaces];
     }
 
     public void update() {
-        GamePlayer[] newTopPlayers = leaderboardCalculator.calculateTopPlayers(playerList.getPlayers().values(), maxPlaces);
+        MSOGamePlayer[] newTopPlayers = leaderboardCalculator.calculateTopPlayers(playerList.getPlayers().values(), maxPlaces);
 
         for (int i = 0; i < maxPlaces; i++) {
             if (i >= newTopPlayers.length) {
@@ -30,7 +31,7 @@ public final class Leaderboard {
         }
     }
 
-    public GamePlayer[] getTopPlayers() {
+    public MSOGamePlayer[] getTopPlayers() {
         return topPlayers;
     }
 

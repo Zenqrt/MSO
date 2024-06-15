@@ -14,7 +14,7 @@ import dev.zenqrt.mso.proxy.commands.LobbyCommand;
 import dev.zenqrt.mso.proxy.commands.StartCommand;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
-import dev.zenqrt.mso.proxy.game.player.GamePlayer;
+import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
 import dev.zenqrt.mso.proxy.messages.ServerTransferHandler;
 import org.slf4j.Logger;
 
@@ -64,7 +64,7 @@ public final class MSOProxy {
 
     @Subscribe
     public void onLogin(LoginEvent event) {
-        game.getPlayerList().addPlayer(new GamePlayer(event.getPlayer().getUniqueId(), 0));
+        game.getPlayerList().addPlayer(new MSOGamePlayer(event.getPlayer().getUniqueId(), event.getPlayer(), 0));
     }
 
     @Subscribe
