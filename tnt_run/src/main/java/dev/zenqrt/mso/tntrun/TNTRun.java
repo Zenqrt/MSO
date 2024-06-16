@@ -15,8 +15,6 @@ public final class TNTRun {
     public static void main(String[] args) throws URISyntaxException, IOException {
         MinestomGameServer server = MinestomGameServer.init();
 
-        MinecraftServer.setBrandName("§a1§e2§c3§r");
-
         TNTRunGame game = new TNTRunGame(server.getInstance(), new TNTRunConfig(server.getConfigJson()));
         game.start();
 

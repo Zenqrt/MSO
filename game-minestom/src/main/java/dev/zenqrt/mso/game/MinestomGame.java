@@ -1,6 +1,7 @@
 package dev.zenqrt.mso.game;
 
 import dev.zenqrt.mso.game.messages.PluginMessageFactory;
+import dev.zenqrt.mso.game.messages.PluginMessenger;
 import dev.zenqrt.mso.game.score.ScoreKeeper;
 import dev.zenqrt.mso.game.state.GameStateSequence;
 import dev.zenqrt.mso.messages.ChannelIdentifiers;
@@ -22,11 +23,8 @@ public class MinestomGame extends GameStateSequence {
     protected void onStateEnd() {
         super.onStateEnd();
 
-        MinecraftServer.getConnectionManager().getOnlinePlayers().stream()
-                .findFirst()
-                .ifPresentOrElse(player -> player.sendPluginMessage(ChannelIdentifiers.GAME_TRANSFER, PluginMessageFactory.gameEndScores(scoreKeeper)),
-                        () -> { throw new RuntimeException("Unable to send plugin message while no players are online"); });
-
+        PluginMessenger.sendPluginMessage(ChannelIdentifiers.UPDATE, PluginMessageFactory.gameEndScores(scoreKeeper));
+        PluginMessenger.sendPluginMessage(ChannelIdentifiers.GAME_TRANSFER, "next_state");
         MinecraftServer.getSchedulerManager().scheduleTask(() -> {
             if (!MinecraftServer.getConnectionManager().getOnlinePlayers().isEmpty())
                 return;

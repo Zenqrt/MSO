@@ -18,7 +18,8 @@ import java.util.UUID;
 
 public final class ActiveGameState extends EventGameState {
 
-    private static final MinecraftChannelIdentifier UPDATE = MinecraftChannelIdentifier.create("mso", "update_scores");
+    private static final MinecraftChannelIdentifier GAME_TRANSFER = MinecraftChannelIdentifier.from(ChannelIdentifiers.GAME_TRANSFER);
+    private static final MinecraftChannelIdentifier UPDATE = MinecraftChannelIdentifier.from(ChannelIdentifiers.UPDATE);
     private final MSOGame game;
     private final MSOTournamentGame tournamentGame;
 
@@ -46,7 +47,7 @@ public final class ActiveGameState extends EventGameState {
     @SuppressWarnings("UnstableApiUsage")
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        if (event.getIdentifier().equals(MinecraftChannelIdentifier.from(ChannelIdentifiers.GAME_TRANSFER))) {
+        if (event.getIdentifier().equals(GAME_TRANSFER)) {
             if (getDataInput(event).readLine().equals("next_state"))
                 game.switchToNextState();
         } else if (event.getIdentifier().equals(UPDATE)) {

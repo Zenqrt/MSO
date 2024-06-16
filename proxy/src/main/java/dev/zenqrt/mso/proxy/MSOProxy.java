@@ -15,7 +15,6 @@ import dev.zenqrt.mso.proxy.commands.StartCommand;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
-import dev.zenqrt.mso.proxy.messages.ServerTransferHandler;
 import org.slf4j.Logger;
 
 @Plugin(
@@ -52,7 +51,6 @@ public final class MSOProxy {
         logger.info("MSOProxy is initializing...");
 
         game.start();
-        server.getEventManager().register(this, new ServerTransferHandler(this, game));
 
         CommandManager commandManager = server.getCommandManager();
         commandManager.register(LobbyCommand.createBrigadierCommand(game.getLobbyServer()));

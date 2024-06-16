@@ -20,13 +20,15 @@ public final class ScoreKeeper {
          audience.sendMessage(GameMessages.scoreAdded(score, reason));
      }
 
-     public void addPlacementScores(GamePlayer[] topPlayers) {
-         addPlacementScore(topPlayers[0], FIRST_PLACE, "1st");
-         addPlacementScore(topPlayers[1], SECOND_PLACE, "2nd");
-         addPlacementScore(topPlayers[2], THIRD_PLACE, "3rd");
+     public void addPlacementScores(Map<Integer, GamePlayer> topPlayers) {
+         addPlacementScore(topPlayers.get(1), FIRST_PLACE, "1st");
+         addPlacementScore(topPlayers.get(2), SECOND_PLACE, "2nd");
+         addPlacementScore(topPlayers.get(3), THIRD_PLACE, "3rd");
      }
 
      private void addPlacementScore(GamePlayer topPlayer, int score, String place) {
+         if (topPlayer == null)
+             return;
          addScore(topPlayer.uuid(), topPlayer.player(), score, place + " place");
      }
 

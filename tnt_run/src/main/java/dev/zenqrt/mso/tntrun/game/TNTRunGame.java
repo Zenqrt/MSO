@@ -1,15 +1,19 @@
 package dev.zenqrt.mso.tntrun.game;
 
 import dev.zenqrt.mso.game.MinestomGame;
-import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayer;
+import dev.zenqrt.mso.game.player.GamePlayer;
 import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayerList;
-import dev.zenqrt.mso.tntrun.game.states.RunningGameState;
 import dev.zenqrt.mso.tntrun.game.states.CountdownGameState;
+import dev.zenqrt.mso.tntrun.game.states.RunningGameState;
+import dev.zenqrt.mso.tntrun.game.states.StatisticShowcaseGameState;
 import dev.zenqrt.mso.tntrun.map.TNTRunConfig;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
 import net.minestom.server.instance.Instance;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class TNTRunGame extends MinestomGame {
 
@@ -21,10 +25,11 @@ public final class TNTRunGame extends MinestomGame {
 
         this.playerList = new TNTRunPlayerList(this);
 
-        TNTRunPlayer[] topPlayers = new TNTRunPlayer[3];
+        Map<Integer, GamePlayer> topPlayers = new HashMap<>();
 
         this.addState(new CountdownGameState(this));
         this.addState(new RunningGameState(eventNode, this, config, topPlayers, getScoreKeeper()));
+        this.addState(new StatisticShowcaseGameState(this, topPlayers, getScoreKeeper()));
     }
 
     @Override

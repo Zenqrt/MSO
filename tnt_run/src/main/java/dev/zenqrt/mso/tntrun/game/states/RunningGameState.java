@@ -1,12 +1,11 @@
 package dev.zenqrt.mso.tntrun.game.states;
 
+import dev.zenqrt.mso.game.player.GamePlayer;
 import dev.zenqrt.mso.game.score.ScoreKeeper;
 import dev.zenqrt.mso.game.state.EventGameState;
 import dev.zenqrt.mso.game.text.GameMessages;
 import dev.zenqrt.mso.game.text.Titles;
 import dev.zenqrt.mso.tntrun.game.TNTRunGame;
-import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayer;
-import dev.zenqrt.mso.tntrun.game.player.TNTRunPlayerList;
 import dev.zenqrt.mso.tntrun.map.TNTRunConfig;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.adventure.audience.Audiences;
@@ -32,11 +31,11 @@ public final class RunningGameState extends EventGameState {
     private final TNTRunGame game;
     private final TNTRunConfig config;
     private final List<Player> playersLeft;
-    private final TNTRunPlayer[] topPlayers;
+    private final Map<Integer, GamePlayer> topPlayers;
     private final ScoreKeeper scoreKeeper;
     private final Map<UUID, Task> blockBreakingTasks = new HashMap<>();
 
-    public RunningGameState(EventNode<Event> parentNode, TNTRunGame game, TNTRunConfig config, TNTRunPlayer[] topPlayers, ScoreKeeper scoreKeeper) {
+    public RunningGameState(EventNode<Event> parentNode, TNTRunGame game, TNTRunConfig config, Map<Integer, GamePlayer> topPlayers, ScoreKeeper scoreKeeper) {
         super(parentNode);
 
         this.game = game;
@@ -54,20 +53,16 @@ public final class RunningGameState extends EventGameState {
                 .handler(event -> {
                     Player player = event.getPlayer();
 
-                    eliminatePlayer(player);
+                    topPlayers.put(playersLeft.size(), game.getPlayerList().getPlayer(player.getUuid()));
                     playersLeft.forEach(playerLeft -> scoreKeeper.addScore(playerLeft.getUuid(), player, 1, "Survival"));
 
-                    if (playersLeft.size() < 3) {
-                        TNTRunPlayerList playerList = game.getPlayerList();
-                        topPlayers[playersLeft.size()] = playerList.getPlayer(player.getUuid());
-
-                        if (playersLeft.size() == 1) {
-                            topPlayers[0] = playerList.getPlayer(playersLeft.stream().findFirst().orElseThrow().getUuid());
-
-                            scoreKeeper.addPlacementScores(topPlayers);
-                            game.switchNextState();
-                        }
+                    if (playersLeft.size() == 1) {
+                        scoreKeeper.addPlacementScores(topPlayers);
+                        game.switchNextState();
+                        return;
                     }
+
+                    eliminatePlayer(player);
                 }).build());
     }
 

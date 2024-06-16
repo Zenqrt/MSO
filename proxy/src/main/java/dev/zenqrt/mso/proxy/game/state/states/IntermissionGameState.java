@@ -21,9 +21,9 @@ public final class IntermissionGameState extends EventGameState {
         super.onStateStart();
 
         ConnectionUtils.sendAllPlayersToServer(plugin.getServer(), game.getLobbyServer());
-        game.getLobbyServer().sendPluginMessage(MinecraftChannelIdentifier.from(ChannelIdentifiers.INFO), (output -> {
+        game.getLobbyServer().sendPluginMessage(MinecraftChannelIdentifier.from(ChannelIdentifiers.INFO), output -> {
             output.writeUTF("next_game");
             output.writeUTF(game.getCurrentGame().displayName());
-        }));
+        });
     }
 }
