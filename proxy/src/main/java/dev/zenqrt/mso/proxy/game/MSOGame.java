@@ -38,7 +38,7 @@ public final class MSOGame extends GameState {
         this.states = new ArrayList<>();
 
         for (MSOTournamentGame tournamentGame : games) {
-            states.add(new IntermissionGameState(plugin, this));
+            states.add(new IntermissionGameState(plugin, this, 300));
             states.add(new ActiveGameState(plugin, this, tournamentGame));
         }
 

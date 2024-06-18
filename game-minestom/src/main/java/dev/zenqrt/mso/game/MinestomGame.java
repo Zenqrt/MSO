@@ -4,7 +4,7 @@ import dev.zenqrt.mso.game.messages.PluginMessageFactory;
 import dev.zenqrt.mso.game.messages.PluginMessenger;
 import dev.zenqrt.mso.game.score.ScoreKeeper;
 import dev.zenqrt.mso.game.state.GameStateSequence;
-import dev.zenqrt.mso.messages.ChannelIdentifiers;
+import dev.zenqrt.mso.messenger.ChannelIdentifiers;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
@@ -25,6 +25,7 @@ public class MinestomGame extends GameStateSequence {
 
         PluginMessenger.sendPluginMessage(ChannelIdentifiers.UPDATE, PluginMessageFactory.gameEndScores(scoreKeeper));
         PluginMessenger.sendPluginMessage(ChannelIdentifiers.GAME_TRANSFER, "next_state");
+        System.out.println("Sent");
         MinecraftServer.getSchedulerManager().scheduleTask(() -> {
             if (!MinecraftServer.getConnectionManager().getOnlinePlayers().isEmpty())
                 return;

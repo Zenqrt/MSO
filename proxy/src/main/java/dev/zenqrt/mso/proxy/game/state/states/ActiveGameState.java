@@ -1,11 +1,10 @@
 package dev.zenqrt.mso.proxy.game.state.states;
 
 import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteStreams;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
-import dev.zenqrt.mso.messages.ChannelIdentifiers;
+import dev.zenqrt.mso.messenger.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
@@ -44,37 +43,39 @@ public final class ActiveGameState extends EventGameState {
         game.switchToNextGame();
     }
 
-    @SuppressWarnings("UnstableApiUsage")
     @Subscribe
     public void onPluginMessage(PluginMessageEvent event) {
-        if (event.getIdentifier().equals(GAME_TRANSFER)) {
-            if (getDataInput(event).readLine().equals("next_state"))
-                game.switchToNextState();
-        } else if (event.getIdentifier().equals(UPDATE)) {
-            ByteArrayDataInput input = getDataInput(event);
-            MSOGamePlayerList playerList = game.getPlayerList();
-
-            for (String uuidString = input.readLine(); uuidString != null; uuidString = input.readLine()) {
-                MSOGamePlayer gamePlayer = playerList.getPlayer(UUID.fromString(uuidString));
-                int pointsEarned = input.readInt();
-
-                playerList.updatePlayer(gamePlayer.addScore(pointsEarned));
-            }
-
-            game.getLeaderboard().update();
-            game.getLobbyServer().sendPluginMessage(MinecraftChannelIdentifier.from(ChannelIdentifiers.INFO), output -> {
-                output.writeUTF("scores");
-
-                for (MSOGamePlayer topPlayer : game.getLeaderboard().getTopPlayers()) {
-                    output.writeUTF(topPlayer.uuid().toString());
-                    output.writeInt(topPlayer.score());
+        System.out.println("Evernt");
+        switch (event.getIdentifier().getId()) {
+            case ChannelIdentifiers.GAME_TRANSFER -> {
+                if (event.dataAsDataStream().readLine().equals("next_state")) {
+                    game.switchToNextState();
                 }
-            });
-        }
-    }
+            }
+            case ChannelIdentifiers.UPDATE -> {
+                ByteArrayDataInput input = event.dataAsDataStream();
+                MSOGamePlayerList playerList = game.getPlayerList();
 
-    @SuppressWarnings("UnstableApiUsage")
-    private static ByteArrayDataInput getDataInput(PluginMessageEvent event) {
-        return ByteStreams.newDataInput(event.dataAsInputStream());
+                for (String uuidString = input.readUTF(); uuidString != null; uuidString = input.readLine()) {
+                    MSOGamePlayer gamePlayer = playerList.getPlayer(UUID.fromString(uuidString));
+                    int pointsEarned = input.readInt();
+
+                    playerList.updatePlayer(gamePlayer.addScore(pointsEarned));
+                }
+
+                game.getLeaderboard().update();
+                game.getLobbyServer().sendPluginMessage(MinecraftChannelIdentifier.from(ChannelIdentifiers.INFO), output -> {
+                    output.writeUTF("scores");
+
+                    for (MSOGamePlayer topPlayer : game.getLeaderboard().getTopPlayers()) {
+                        if (topPlayer == null)
+                            break;
+
+                        output.writeUTF(topPlayer.uuid().toString());
+                        output.writeInt(topPlayer.score());
+                    }
+                });
+            }
+        }
     }
 }

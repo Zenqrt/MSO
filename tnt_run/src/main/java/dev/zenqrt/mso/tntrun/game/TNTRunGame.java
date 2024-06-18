@@ -33,6 +33,11 @@ public final class TNTRunGame extends MinestomGame {
     }
 
     @Override
+    protected void onLastStateFinished() {
+        end();
+    }
+
+    @Override
     protected void onStateStart() {
         super.onStateStart();
 

@@ -5,13 +5,17 @@ import com.velocitypowered.api.command.CommandManager;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.LoginEvent;
+import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import dev.zenqrt.mso.messenger.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.commands.JoinCommand;
 import dev.zenqrt.mso.proxy.commands.LobbyCommand;
 import dev.zenqrt.mso.proxy.commands.StartCommand;
+import dev.zenqrt.mso.proxy.commands.StatusCommand;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
@@ -25,14 +29,17 @@ import org.slf4j.Logger;
 )
 public final class MSOProxy {
 
+    private static MSOProxy instance;
     private final ProxyServer server;
     private final Logger logger;
     private final MSOGame game;
 
     @Inject
     public MSOProxy(ProxyServer server, Logger logger) {
+        instance = this;
         this.server = server;
         this.logger = logger;
+
         this.game = new MSOGame(this, findServer("lobby"), new MSOTournamentGame[]{
                 new MSOTournamentGame("TNT Run", findServer("tnt_run")),
                 new MSOTournamentGame("One in the Chamber", findServer("oitc")),
@@ -50,24 +57,36 @@ public final class MSOProxy {
     public void onProxyInitialization(ProxyInitializeEvent ignored) {
         logger.info("MSOProxy is initializing...");
 
+        server.getChannelRegistrar().register(
+                MinecraftChannelIdentifier.from(ChannelIdentifiers.GAME_TRANSFER),
+                MinecraftChannelIdentifier.from(ChannelIdentifiers.UPDATE)
+        );
+
         game.start();
 
         CommandManager commandManager = server.getCommandManager();
         commandManager.register(LobbyCommand.createBrigadierCommand(game.getLobbyServer()));
         commandManager.register(JoinCommand.createBrigadierCommand(game));
+        commandManager.register(StatusCommand.createBrigadierCommand(game));
         commandManager.register(StartCommand.createBrigadierCommand(game));
 
-        logger.info("MSOProxy has initialized.");
+        logger.info("MSOProxy hass initialized.");
     }
 
     @Subscribe
     public void onLogin(LoginEvent event) {
+        logger.info("Hi");
         game.getPlayerList().addPlayer(new MSOGamePlayer(event.getPlayer().getUniqueId(), event.getPlayer(), 0));
     }
 
     @Subscribe
     public void onDisconnect(DisconnectEvent event) {
         game.getPlayerList().removePlayer(event.getPlayer().getUniqueId());
+    }
+
+    @Subscribe
+    public void onPluginMessage(PluginMessageEvent event) {
+        logger.info("Messaged!!!");
     }
 
     public ProxyServer getServer() {
@@ -80,5 +99,9 @@ public final class MSOProxy {
 
     public MSOGame getGame() {
         return game;
+    }
+
+    public static MSOProxy getInstance() {
+        return instance;
     }
 }

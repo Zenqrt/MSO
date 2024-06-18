@@ -1,4 +1,4 @@
-package dev.zenqrt.mso.messages;
+package dev.zenqrt.mso.messenger;
 
 public final class ChannelIdentifiers {
 

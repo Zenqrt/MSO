@@ -21,7 +21,7 @@ public final class TNTRun {
         MinecraftServer.getGlobalEventHandler().addListener(PlayerSpawnEvent.class, event ->
                 game.getPlayerList().addPlayer(new TNTRunPlayer(event.getPlayer().getUuid(), event.getPlayer(), 0)));
 
-        server.start(25566);
+        server.start(30066);
     }
 
 }
