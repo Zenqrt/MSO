@@ -4,6 +4,7 @@ import com.google.common.io.ByteArrayDataInput;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
+import com.velocitypowered.api.util.GameProfile;
 import dev.zenqrt.mso.messenger.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.MSOGame;
@@ -72,6 +73,15 @@ public final class ActiveGameState extends EventGameState {
                             break;
 
                         output.writeUTF(topPlayer.uuid().toString());
+                        output.writeUTF(topPlayer.player().getUsername());
+
+                        GameProfile.Property textureProperty = topPlayer.player().getGameProfileProperties().stream()
+                                .filter(property -> property.getName().equals("textures"))
+                                .findFirst()
+                                .orElseThrow();
+                        output.writeUTF(textureProperty.getValue());
+                        output.writeUTF(textureProperty.getSignature());
+
                         output.writeInt(topPlayer.score());
                     }
                 });

@@ -2,6 +2,7 @@ package dev.zenqrt.mso.lobby.rainbowman;
 
 import dev.zenqrt.mso.lobby.configuration.RainbowManConfig;
 import dev.zenqrt.mso.lobby.entity.NPC;
+import dev.zenqrt.mso.lobby.entity.NPCLookAt;
 import dev.zenqrt.mso.lobby.item.ItemRegistry;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -9,7 +10,6 @@ import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
 import net.minestom.server.entity.PlayerSkin;
-import net.minestom.server.entity.metadata.EntityMeta;
 import net.minestom.server.entity.metadata.animal.SheepMeta;
 import net.minestom.server.entity.metadata.display.AbstractDisplayMeta;
 import net.minestom.server.entity.metadata.display.TextDisplayMeta;
@@ -28,15 +28,9 @@ public final class RainbowManHandler {
     }
 
     public void init(Instance instance) {
-        NPC npc = new NPC("rainbowman", PlayerSkin.fromUsername("Minikloon"));
-
+        NPC npc = new NPCLookAt("rainbowman", PlayerSkin.fromUsername("Minikloon"));
         npc.setInstance(instance, config.npcPosition());
-
-        Entity tagHider = new Entity(EntityType.SLIME);
-        tagHider.editEntityMeta(EntityMeta.class, meta -> meta.setInvisible(true));
-        tagHider.setInstance(instance, config.npcPosition());
-
-        instance.loadChunk(config.npcPosition()).thenRun(() -> npc.addPassenger(tagHider));
+        npc.hideNameTag();
 
         Entity npcTag = new Entity(EntityType.TEXT_DISPLAY);
         npcTag.editEntityMeta(TextDisplayMeta.class, meta -> {
