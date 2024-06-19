@@ -1,6 +1,6 @@
 package dev.zenqrt.mso.messenger;
 
-public final class ChannelIdentifiers {
+public final class Channels {
 
     public static final String GAME_TRANSFER = "mso:game_transfer";
     public static final String UPDATE = "mso:update";

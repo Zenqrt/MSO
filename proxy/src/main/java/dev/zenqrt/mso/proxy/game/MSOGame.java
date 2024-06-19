@@ -1,7 +1,13 @@
 package dev.zenqrt.mso.proxy.game;
 
 import com.velocitypowered.api.proxy.server.RegisteredServer;
+import dev.zenqrt.mso.messenger.MessageConnectionManager;
 import dev.zenqrt.mso.game.state.GameState;
+import dev.zenqrt.mso.messenger.Channels;
+import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
+import dev.zenqrt.mso.messenger.SingleChannelMessageSender;
+import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageReceiver;
+import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageSender;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayerList;
@@ -17,6 +23,10 @@ public final class MSOGame extends GameState {
 
     private final MSOGamePlayerList playerList;
     private final RegisteredServer lobbyServer;
+    private final MessageConnectionManager messageConnectionManager;
+    private final SingleChannelMessageSender infoChannelSender;
+    private final SingleChannelMessageReceiver gameTransferChannelReceiver;
+    private final SingleChannelMessageReceiver updateChannelReceiver;
     private final MSOTournamentGame[] games;
     private final Leaderboard leaderboard;
     private final List<GameState> states;
@@ -28,6 +38,12 @@ public final class MSOGame extends GameState {
     public MSOGame(MSOProxy plugin, RegisteredServer lobbyServer, MSOTournamentGame[] games) {
         this.playerList = new MSOGamePlayerList(this);
         this.lobbyServer = lobbyServer;
+
+        this.messageConnectionManager = MessageConnectionManager.fromConnectionSettings();
+        this.infoChannelSender = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageSender(serverId, Channels.INFO));
+        this.gameTransferChannelReceiver = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageReceiver(serverId, Channels.GAME_TRANSFER));
+        this.updateChannelReceiver = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageReceiver(serverId, Channels.UPDATE));
+
         this.games = games;
         this.leaderboard = new Leaderboard(3, playerList, (gamePlayers, places) -> gamePlayers.stream()
                 .sorted(Comparator.comparingInt(MSOGamePlayer::score))
@@ -47,7 +63,15 @@ public final class MSOGame extends GameState {
 
     @Override
     protected void onStateStart() {
+        messageConnectionManager.establishConnections();
         state.start();
+    }
+
+    @Override
+    protected void onStateEnd() {
+        super.onStateEnd();
+        state.end();
+        messageConnectionManager.closeConnections();
     }
 
     public MSOGamePlayerList getPlayerList() {
@@ -90,5 +114,17 @@ public final class MSOGame extends GameState {
 
     public GameState getState() {
         return state;
+    }
+
+    public SingleChannelMessageSender getInfoChannelSender() {
+        return infoChannelSender;
+    }
+
+    public SingleChannelMessageReceiver getGameTransferChannelReceiver() {
+        return gameTransferChannelReceiver;
+    }
+
+    public SingleChannelMessageReceiver getUpdateChannelReceiver() {
+        return updateChannelReceiver;
     }
 }

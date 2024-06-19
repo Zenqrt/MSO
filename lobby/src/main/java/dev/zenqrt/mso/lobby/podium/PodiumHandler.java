@@ -3,46 +3,61 @@ package dev.zenqrt.mso.lobby.podium;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
 import dev.zenqrt.mso.lobby.PodiumDisplay;
-import dev.zenqrt.mso.messenger.ChannelIdentifiers;
+import dev.zenqrt.mso.messenger.Channels;
+import dev.zenqrt.mso.messenger.ConnectionSettings;
+import dev.zenqrt.mso.messenger.MessageConnection;
+import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
+import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageReceiver;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.Event;
-import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
-import net.minestom.server.event.player.PlayerPluginMessageEvent;
 import net.minestom.server.utils.validate.Check;
+
+import java.io.EOFException;
 
 public final class PodiumHandler {
 
     private final PodiumDisplay[] displays;
     private final EventNode<Event> eventNode = EventNode.all("podiums");
+    private final SingleChannelMessageReceiver infoChannelReceiver;
 
     public PodiumHandler(PodiumDisplay[] displays) {
         Check.argCondition(displays.length != 3, "displays should be length of 3");
         this.displays = displays;
+        this.infoChannelReceiver = MessageConnection.fromServerId(serverId -> new RabbitMQMessageReceiver(serverId, Channels.INFO));
     }
 
     public void init() {
-        eventNode.addListener(EventListener.builder(PlayerPluginMessageEvent.class)
-                .filter(event -> {
-                    System.out.println("Event!!! " + event.getIdentifier());
-                    return event.getIdentifier().equals(ChannelIdentifiers.INFO);
-                })
-                .handler(event -> {
-                    ByteArrayDataInput input = ByteStreams.newDataInput(event.getMessage());
+        infoChannelReceiver.establishConnection(ConnectionSettings.HOST, ConnectionSettings.PORT);
+        ConnectionSettings.createMessageReceiveListener(infoChannelReceiver, data -> {
+            ByteArrayDataInput input = ByteStreams.newDataInput(data);
 
-                    if (input.readLine().equals("scores")) {
-                        int index = 0;
-                        for (String uuidString = input.readLine(); uuidString != null; uuidString = input.readLine()) {
-                            String username = input.readLine();
-                            String textureValue = input.readLine();
-                            String signature = input.readLine();
-                            int score = input.readInt();
+            System.out.println("received data");
+            String line = input.readUTF();
+            System.out.println(line);
+            if (line.equals("scores")) {
+                int index = 0;
 
-                            displays[index++].update(username, new PlayerSkin(textureValue, signature));
-                            System.out.println("Score: " + score);
+                while (true) {
+                    try {
+                        String uuidString = input.readUTF();
+                        String username = input.readUTF();
+                        String textureValue = input.readUTF();
+                        String signature = input.readUTF();
+                        int score = input.readInt();
+
+                        displays[index++].update(username, new PlayerSkin(textureValue, signature));
+                        System.out.println("Score: " + score);
+                    } catch (RuntimeException exception) {
+                        if (!(exception.getCause() instanceof EOFException)) {
+                            return;
                         }
+
+                        break;
                     }
-                }).build());
+                }
+            }
+        }).start();
     }
 
     public EventNode<Event> getEventNode() {

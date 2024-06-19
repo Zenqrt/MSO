@@ -1,8 +1,6 @@
 package dev.zenqrt.mso.proxy.game.state.states;
 
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.scheduler.ScheduledTask;
-import dev.zenqrt.mso.messenger.ChannelIdentifiers;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.state.EventGameState;
@@ -17,7 +15,7 @@ import java.time.Duration;
 public final class IntermissionGameState extends EventGameState {
 
     private final MSOGame game;
-    private int timeLength;
+    private final int timeLength;
     private ScheduledTask timerTask;
 
     public IntermissionGameState(MSOProxy plugin, MSOGame game, int timeSeconds) {
@@ -31,9 +29,9 @@ public final class IntermissionGameState extends EventGameState {
     protected void onStateStart() {
         super.onStateStart();
 
+        System.out.println("Start intermission");
         ConnectionUtils.sendAllPlayersToServer(plugin.getServer(), game.getLobbyServer());
-
-        game.getLobbyServer().sendPluginMessage(MinecraftChannelIdentifier.from(ChannelIdentifiers.INFO), output -> {
+        game.getInfoChannelSender().sendMessage("lobby", output -> {
             output.writeUTF("next_game");
             output.writeUTF(game.getCurrentGame().displayName());
         });

@@ -2,6 +2,8 @@ package dev.zenqrt.mso.game;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dev.zenqrt.mso.game.player.GamePlayer;
+import dev.zenqrt.mso.game.player.GamePlayerProvider;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
@@ -20,6 +22,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Objects;
+import java.util.function.Function;
 
 public final class MinestomGameServer {
 
@@ -47,7 +50,7 @@ public final class MinestomGameServer {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static MinestomGameServer init() throws URISyntaxException, IOException {
+    public static <T extends GamePlayer> MinestomGameServer init(GamePlayerProvider<T, Player> gamePlayerProvider, Function<MinestomGameServer, MinestomGame> gameSupplier) throws URISyntaxException, IOException {
         MinecraftServer server = MinecraftServer.init();
         VelocityProxy.enable(readForwardingSecret());
 
@@ -74,7 +77,11 @@ public final class MinestomGameServer {
             player.setRespawnPoint(new Pos(x, y, z));
             player.setGameMode(GameMode.ADVENTURE);
         });
-        return new MinestomGameServer(server, instance, configJson);
+
+        MinestomGameServer minestomGameServer = new MinestomGameServer(server, instance, configJson);
+        gameSupplier.apply(minestomGameServer).start();
+
+        return minestomGameServer;
     }
 
     private static String readForwardingSecret() {

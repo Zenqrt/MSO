@@ -15,6 +15,7 @@
         <module>tnt_run</module>
         <module>game-minestom</module>
         <module>mso-common</module>
+        <module>match</module>
     </modules>
 
     <properties>

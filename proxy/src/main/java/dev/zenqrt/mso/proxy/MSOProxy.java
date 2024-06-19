@@ -11,7 +11,7 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.zenqrt.mso.messenger.ChannelIdentifiers;
+import dev.zenqrt.mso.messenger.Channels;
 import dev.zenqrt.mso.proxy.commands.JoinCommand;
 import dev.zenqrt.mso.proxy.commands.LobbyCommand;
 import dev.zenqrt.mso.proxy.commands.StartCommand;
@@ -58,8 +58,8 @@ public final class MSOProxy {
         logger.info("MSOProxy is initializing...");
 
         server.getChannelRegistrar().register(
-                MinecraftChannelIdentifier.from(ChannelIdentifiers.GAME_TRANSFER),
-                MinecraftChannelIdentifier.from(ChannelIdentifiers.UPDATE)
+                MinecraftChannelIdentifier.from(Channels.GAME_TRANSFER),
+                MinecraftChannelIdentifier.from(Channels.UPDATE)
         );
 
         game.start();
