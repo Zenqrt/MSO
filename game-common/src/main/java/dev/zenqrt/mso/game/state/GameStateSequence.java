@@ -6,62 +6,30 @@ import java.util.List;
 public class GameStateSequence extends GameState {
 
     private final List<GameState> states;
-    private GameState currentState;
-    private int currentStateIndex;
+    private GameStateRunner runner;
 
     public GameStateSequence() {
         this.states = new ArrayList<>();
-        this.currentStateIndex = 0;
     }
-
-    protected void onLastStateFinished() {}
 
     @Override
     protected void onStateStart() {
-        currentState = states.getFirst();
-
-        if (states.isEmpty()) {
-            end();
-            return;
-        }
-
-        currentState.start();
+        runner = new GameStateRunner(states);
+        runner.run();
+        this.notifyEnd();
     }
 
     @Override
     protected void onStateEnd() {
-        if (currentStateIndex >= states.size())
-            return;
-
-        currentState.end();
+        if (getCurrentState().isActive())
+            getCurrentState().end();
     }
 
-    public void switchNextState() {
-        if (currentStateIndex >= states.size() - 1) {
-            onLastStateFinished();
-            return;
-        }
-
-        if (!currentState.end())
-            return;
-
-        currentState = states.get(++currentStateIndex);
-        currentState.start();
-    }
-
-    public void switchPreviousState() {
-        if (!currentState.end())
-            return;
-
-        currentState = states.get(--currentStateIndex);
-        currentState.start();
-    }
-
-    protected void addState(GameState state) {
+    public void addState(GameState state) {
         states.add(state);
     }
 
     public GameState getCurrentState() {
-        return currentState;
+        return runner.getCurrentState();
     }
 }

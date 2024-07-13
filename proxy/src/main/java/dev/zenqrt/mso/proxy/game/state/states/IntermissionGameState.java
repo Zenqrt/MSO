@@ -31,7 +31,7 @@ public final class IntermissionGameState extends EventGameState {
 
         System.out.println("Start intermission");
         ConnectionUtils.sendAllPlayersToServer(plugin.getServer(), game.getLobbyServer());
-        game.getInfoChannelSender().sendMessage("lobby", output -> {
+        game.getInfoChannelSender().sendMessageAsync("lobby", output -> {
             output.writeUTF("next_game");
             output.writeUTF(game.getCurrentGame().displayName());
         });
@@ -43,6 +43,7 @@ public final class IntermissionGameState extends EventGameState {
 
     @Override
     protected void onStateEnd() {
+        System.out.println("Ending intermission");
         super.onStateEnd();
         timerTask.cancel();
     }
@@ -66,7 +67,7 @@ public final class IntermissionGameState extends EventGameState {
                 return;
             }
 
-            audience.sendActionBar(Component.text("Intermission: {time}", NamedTextColor.GRAY)
+            audience.sendActionBar(Component.text("ɪɴᴛᴇʀᴍɪꜱꜱɪᴏɴ: {time}", NamedTextColor.LIGHT_PURPLE)
                     .replaceText(builder -> builder.matchLiteral("{time}").replacement(Component.text(formatTime(timeLeft), NamedTextColor.GREEN))));
             timeLeft--;
         }

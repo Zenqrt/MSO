@@ -7,12 +7,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public interface SingleChannelMessageSender extends MessageConnection {
-    CompletableFuture<Void> sendMessage(String serverId, byte[] data);
+    void sendMessage(String serverId, byte[] data);
 
-    default CompletableFuture<Void> sendMessage(String serverId, Consumer<ByteArrayDataOutput> outputConsumer) {
+    default void sendMessage(String serverId, Consumer<ByteArrayDataOutput> outputConsumer) {
         ByteArrayDataOutput output = ByteStreams.newDataOutput();
         outputConsumer.accept(output);
 
-        return sendMessage(serverId, output.toByteArray());
+        sendMessage(serverId, output.toByteArray());
+    }
+
+    default CompletableFuture<Void> sendMessageAsync(String serverId, Consumer<ByteArrayDataOutput> outputConsumer) {
+        return CompletableFuture.runAsync(() -> sendMessage(serverId, outputConsumer));
     }
 }

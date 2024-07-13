@@ -4,17 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public abstract class HashMapGamePlayerList<T extends GamePlayer> implements GamePlayerList<T> {
+public class HashMapGamePlayerList<T extends GamePlayer> implements GamePlayerList<T> {
 
     private final Map<UUID, T> players = new HashMap<>();
-
-    protected abstract boolean canJoinGame();
 
     @Override
     public boolean addPlayer(T gamePlayer) {
         UUID uuid = gamePlayer.uuid();
 
-        if (!(canJoinGame() && !players.containsKey(uuid)))
+        if (players.containsKey(uuid))
             return false;
 
         players.put(uuid, gamePlayer);

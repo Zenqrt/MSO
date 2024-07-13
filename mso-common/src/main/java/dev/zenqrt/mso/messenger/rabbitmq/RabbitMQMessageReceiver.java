@@ -64,6 +64,7 @@ public final class RabbitMQMessageReceiver implements SingleChannelMessageReceiv
         };
 
         try {
+            System.out.println("queue = " + queueName);
             this.channel.basicConsume(queueName, false, callback, _ -> {});
         } catch (IOException exception) {
             throw new RuntimeException(exception);

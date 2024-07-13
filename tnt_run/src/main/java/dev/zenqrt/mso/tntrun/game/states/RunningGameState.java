@@ -32,17 +32,15 @@ public final class RunningGameState extends EventGameState {
     private final TNTRunConfig config;
     private final List<Player> playersLeft;
     private final Map<Integer, GamePlayer> topPlayers;
-    private final ScoreKeeper scoreKeeper;
     private final Map<UUID, Task> blockBreakingTasks = new HashMap<>();
 
-    public RunningGameState(EventNode<Event> parentNode, TNTRunGame game, TNTRunConfig config, Map<Integer, GamePlayer> topPlayers, ScoreKeeper scoreKeeper) {
+    public RunningGameState(EventNode<Event> parentNode, TNTRunGame game, TNTRunConfig config, Map<Integer, GamePlayer> topPlayers) {
         super(parentNode);
 
         this.game = game;
         this.config = config;
         this.playersLeft = new ArrayList<>();
         this.topPlayers = topPlayers;
-        this.scoreKeeper = scoreKeeper;
     }
 
     @Override
@@ -51,6 +49,7 @@ public final class RunningGameState extends EventGameState {
                 .filter(event -> playersLeft.contains(event.getPlayer()))
                 .filter(event -> event.getNewPosition().y() < config.bottomYLevel())
                 .handler(event -> {
+                    ScoreKeeper scoreKeeper = game.getScoreKeeper();
                     Player player = event.getPlayer();
 
                     topPlayers.put(playersLeft.size(), game.getPlayerList().getPlayer(player.getUuid()));
@@ -58,7 +57,7 @@ public final class RunningGameState extends EventGameState {
 
                     if (playersLeft.size() == 1) {
                         scoreKeeper.addPlacementScores(topPlayers);
-                        game.switchNextState();
+                        this.notifyEnd();
                         return;
                     }
 

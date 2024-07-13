@@ -1,7 +1,6 @@
 package dev.zenqrt.mso.tntrun.game.states;
 
 import dev.zenqrt.mso.game.player.GamePlayer;
-import dev.zenqrt.mso.game.score.ScoreKeeper;
 import dev.zenqrt.mso.game.state.GameState;
 import dev.zenqrt.mso.tntrun.game.TNTRunGame;
 import net.kyori.adventure.text.Component;
@@ -19,12 +18,10 @@ public final class StatisticShowcaseGameState extends GameState {
 
     private final TNTRunGame game;
     private final Map<Integer, GamePlayer> topPlayers;
-    private final ScoreKeeper scoreKeeper;
 
-    public StatisticShowcaseGameState(TNTRunGame game, Map<Integer, GamePlayer> topPlayers, ScoreKeeper scoreKeeper) {
+    public StatisticShowcaseGameState(TNTRunGame game, Map<Integer, GamePlayer> topPlayers) {
         this.game = game;
         this.topPlayers = topPlayers;
-        this.scoreKeeper = scoreKeeper;
     }
 
     @Override
@@ -38,7 +35,7 @@ public final class StatisticShowcaseGameState extends GameState {
 
         topPlayers.forEach((place, gamePlayer) -> showPlacementTitle(gamePlayer, place));
 
-        MinecraftServer.getSchedulerManager().scheduleTask(game::switchNextState,
+        MinecraftServer.getSchedulerManager().scheduleTask(this::notifyEnd,
                 TaskSchedule.seconds(10), TaskSchedule.stop());
     }
 

@@ -5,9 +5,8 @@ import com.google.common.io.ByteStreams;
 import dev.zenqrt.mso.lobby.PodiumDisplay;
 import dev.zenqrt.mso.messenger.Channels;
 import dev.zenqrt.mso.messenger.ConnectionSettings;
-import dev.zenqrt.mso.messenger.MessageConnection;
 import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
-import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageReceiver;
+import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessenger;
 import net.minestom.server.entity.PlayerSkin;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
@@ -24,7 +23,7 @@ public final class PodiumHandler {
     public PodiumHandler(PodiumDisplay[] displays) {
         Check.argCondition(displays.length != 3, "displays should be length of 3");
         this.displays = displays;
-        this.infoChannelReceiver = MessageConnection.fromServerId(serverId -> new RabbitMQMessageReceiver(serverId, Channels.INFO));
+        this.infoChannelReceiver = RabbitMQMessenger.createReceiverWithId(Channels.INFO);
     }
 
     public void init() {

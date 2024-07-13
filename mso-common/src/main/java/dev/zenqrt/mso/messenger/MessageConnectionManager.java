@@ -5,23 +5,20 @@ import java.util.List;
 
 public final class MessageConnectionManager {
 
-    private final String serverId;
     private final String host;
     private final int port;
     private final List<MessageConnection> connections = new ArrayList<>();
 
-    MessageConnectionManager(String serverId, String host, int port) {
-        this.serverId = serverId;
+    MessageConnectionManager(String host, int port) {
         this.host = host;
         this.port = port;
     }
 
     public static MessageConnectionManager fromConnectionSettings() {
-        return new MessageConnectionManager(ConnectionSettings.SERVER_ID, ConnectionSettings.HOST, ConnectionSettings.PORT);
+        return new MessageConnectionManager(ConnectionSettings.HOST, ConnectionSettings.PORT);
     }
 
-    public <T extends MessageConnection> T registerConnection(MessageConnection.MessageConnectionFactory<T> factory) {
-        T connection = factory.createFromServerId(serverId);
+    public <T extends MessageConnection> T registerConnection(T connection) {
         connections.add(connection);
         return connection;
     }

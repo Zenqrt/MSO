@@ -1,62 +1,53 @@
 package dev.zenqrt.mso.game;
 
-import dev.zenqrt.mso.messenger.MessageConnectionManager;
-import dev.zenqrt.mso.game.messages.PluginMessageFactory;
-import dev.zenqrt.mso.game.score.ScoreKeeper;
-import dev.zenqrt.mso.game.state.GameStateSequence;
-import dev.zenqrt.mso.messenger.Channels;
-import dev.zenqrt.mso.messenger.SingleChannelMessageSender;
-import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageSender;
+import dev.zenqrt.mso.game.player.GamePlayer;
+import dev.zenqrt.mso.game.player.GamePlayerList;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.event.Event;
+import net.minestom.server.event.EventNode;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.timer.TaskSchedule;
 
 import java.util.concurrent.CompletableFuture;
 
-public class MinestomGame extends GameStateSequence {
+public abstract class MinestomGame<T extends GamePlayer> extends Game<T> {
 
+    private final EventNode<Event> eventNode = EventNode.all("minestom-game");
+    private final EventNode<Event> parentNode;
     private final Instance instance;
-    private final MessageConnectionManager messageConnectionManager;
-    private final SingleChannelMessageSender updateChannelSender;
-    private final SingleChannelMessageSender gameTransferChannelSender;
-    private final ScoreKeeper scoreKeeper;
 
-    public MinestomGame(Instance instance) {
+    public MinestomGame(Instance instance, GamePlayerList<T> playerList) {
+        super(playerList);
+
+        this.parentNode = MinecraftServer.getGlobalEventHandler();
         this.instance = instance;
-        this.messageConnectionManager = MessageConnectionManager.fromConnectionSettings();
-        this.updateChannelSender = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageSender(serverId, Channels.UPDATE));
-        this.gameTransferChannelSender = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageSender(serverId, Channels.GAME_TRANSFER));
-        this.scoreKeeper =  new ScoreKeeper();
     }
 
     @Override
     protected void onStateStart() {
         super.onStateStart();
-        messageConnectionManager.establishConnections();
+        parentNode.addChild(eventNode);
     }
 
     @Override
     protected void onStateEnd() {
         super.onStateEnd();
 
-        this.updateChannelSender.sendMessage("proxy", PluginMessageFactory.gameEndScores(scoreKeeper));
-        this.gameTransferChannelSender.sendMessage("proxy", new byte[] {});
+        parentNode.removeChild(eventNode);
+
         MinecraftServer.getSchedulerManager().scheduleTask(() -> {
             if (!MinecraftServer.getConnectionManager().getOnlinePlayers().isEmpty())
                 return;
 
-            CompletableFuture.runAsync(() -> {
-                messageConnectionManager.closeConnections();
-                MinecraftServer.stopCleanly();
-            });
+            CompletableFuture.runAsync(MinecraftServer::stopCleanly);
         }, TaskSchedule.seconds(1), TaskSchedule.seconds(3));
+    }
+
+    public EventNode<Event> getEventNode() {
+        return eventNode;
     }
 
     public Instance getInstance() {
         return instance;
-    }
-
-    protected ScoreKeeper getScoreKeeper() {
-        return scoreKeeper;
     }
 }

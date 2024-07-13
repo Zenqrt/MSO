@@ -1,13 +1,12 @@
 package dev.zenqrt.mso.proxy.game;
 
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.zenqrt.mso.messenger.MessageConnectionManager;
 import dev.zenqrt.mso.game.state.GameState;
 import dev.zenqrt.mso.messenger.Channels;
+import dev.zenqrt.mso.messenger.MessageConnectionManager;
 import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
 import dev.zenqrt.mso.messenger.SingleChannelMessageSender;
-import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageReceiver;
-import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessageSender;
+import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessenger;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayerList;
@@ -40,9 +39,9 @@ public final class MSOGame extends GameState {
         this.lobbyServer = lobbyServer;
 
         this.messageConnectionManager = MessageConnectionManager.fromConnectionSettings();
-        this.infoChannelSender = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageSender(serverId, Channels.INFO));
-        this.gameTransferChannelReceiver = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageReceiver(serverId, Channels.GAME_TRANSFER));
-        this.updateChannelReceiver = messageConnectionManager.registerConnection(serverId -> new RabbitMQMessageReceiver(serverId, Channels.UPDATE));
+        this.infoChannelSender = messageConnectionManager.registerConnection(RabbitMQMessenger.createSenderWithId(Channels.INFO));
+        this.gameTransferChannelReceiver = messageConnectionManager.registerConnection(RabbitMQMessenger.createReceiverWithId(Channels.GAME_TRANSFER));
+        this.updateChannelReceiver = messageConnectionManager.registerConnection(RabbitMQMessenger.createReceiverWithId(Channels.UPDATE));
 
         this.games = games;
         this.leaderboard = new Leaderboard(3, playerList, (gamePlayers, places) -> gamePlayers.stream()
@@ -63,8 +62,10 @@ public final class MSOGame extends GameState {
 
     @Override
     protected void onStateStart() {
+        System.out.println("Stareting");
         messageConnectionManager.establishConnections();
         state.start();
+        System.out.println("Started");
     }
 
     @Override
@@ -106,6 +107,11 @@ public final class MSOGame extends GameState {
         }
 
         currentGame = games[currentGameIndex];
+    }
+
+    public MSOTournamentGame setCurrentGame(int index) {
+        currentGameIndex = index;
+        return currentGame = games[index];
     }
 
     public MSOTournamentGame getCurrentGame() {

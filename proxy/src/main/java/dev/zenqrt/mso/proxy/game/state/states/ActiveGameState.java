@@ -81,7 +81,6 @@ public final class ActiveGameState extends EventGameState {
     protected void onStateStart() {
         super.onStateStart();
 
-        System.out.println("Start active state");
         ConnectionUtils.sendAllPlayersToServer(plugin.getServer(), tournamentGame.server());
         this.nextStateListener.start();
         this.updateLeaderboardListener.start();

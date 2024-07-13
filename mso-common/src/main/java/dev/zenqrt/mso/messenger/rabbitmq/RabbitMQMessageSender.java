@@ -6,7 +6,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import dev.zenqrt.mso.messenger.SingleChannelMessageSender;
 
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 
 public final class RabbitMQMessageSender implements SingleChannelMessageSender {
@@ -55,14 +54,12 @@ public final class RabbitMQMessageSender implements SingleChannelMessageSender {
     }
 
     @Override
-    public CompletableFuture<Void> sendMessage(String serverId, byte[] data) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                this.channel.basicPublish(channelName, serverId, null, data);
-            } catch (IOException exception) {
-                throw new RuntimeException(exception);
-            }
-        });
+    public void sendMessage(String serverId, byte[] data) {
+        try {
+            this.channel.basicPublish(channelName, serverId, null, data);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     @Override

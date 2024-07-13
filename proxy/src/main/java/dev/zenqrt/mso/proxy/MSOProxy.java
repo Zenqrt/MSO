@@ -9,13 +9,8 @@ import com.velocitypowered.api.event.connection.PluginMessageEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
-import com.velocitypowered.api.proxy.messages.MinecraftChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
-import dev.zenqrt.mso.messenger.Channels;
-import dev.zenqrt.mso.proxy.commands.JoinCommand;
-import dev.zenqrt.mso.proxy.commands.LobbyCommand;
-import dev.zenqrt.mso.proxy.commands.StartCommand;
-import dev.zenqrt.mso.proxy.commands.StatusCommand;
+import dev.zenqrt.mso.proxy.commands.*;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
@@ -39,13 +34,14 @@ public final class MSOProxy {
         instance = this;
         this.server = server;
         this.logger = logger;
+        
 
         this.game = new MSOGame(this, findServer("lobby"), new MSOTournamentGame[]{
-                new MSOTournamentGame("TNT Run", findServer("tnt_run")),
-                new MSOTournamentGame("One in the Chamber", findServer("oitc")),
-                new MSOTournamentGame("Match", findServer("match")),
-                new MSOTournamentGame("Survival Games", findServer("survival_games")),
-                new MSOTournamentGame("Parkour Race", findServer("parkour_race"))
+                new MSOTournamentGame("TNT Run", "tnt_run", findServer("tnt_run")),
+                new MSOTournamentGame("One in the Chamber", "oitc", findServer("oitc")),
+                new MSOTournamentGame("Match", "match", findServer("match")),
+                new MSOTournamentGame("Survival Games", "survival_games", findServer("survival_games")),
+                new MSOTournamentGame("Parkour Race", "parkour_race", findServer("parkour_race"))
         });
     }
 
@@ -57,11 +53,6 @@ public final class MSOProxy {
     public void onProxyInitialization(ProxyInitializeEvent ignored) {
         logger.info("MSOProxy is initializing...");
 
-        server.getChannelRegistrar().register(
-                MinecraftChannelIdentifier.from(Channels.GAME_TRANSFER),
-                MinecraftChannelIdentifier.from(Channels.UPDATE)
-        );
-
         game.start();
 
         CommandManager commandManager = server.getCommandManager();
@@ -69,8 +60,9 @@ public final class MSOProxy {
         commandManager.register(JoinCommand.createBrigadierCommand(game));
         commandManager.register(StatusCommand.createBrigadierCommand(game));
         commandManager.register(StartCommand.createBrigadierCommand(game));
+        commandManager.register(SetGameCommand.createBrigadierCommand(game));
 
-        logger.info("MSOProxy hass initialized.");
+        logger.info("MSOProxy has initialized.");
     }
 
     @Subscribe

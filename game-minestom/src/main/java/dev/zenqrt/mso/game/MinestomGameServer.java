@@ -5,10 +5,9 @@ import com.google.gson.JsonObject;
 import dev.zenqrt.mso.game.player.GamePlayer;
 import dev.zenqrt.mso.game.player.GamePlayerProvider;
 import net.minestom.server.MinecraftServer;
-import net.minestom.server.coordinate.Pos;
-import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
-import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.player.PlayerDisconnectEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.anvil.AnvilLoader;
@@ -37,6 +36,10 @@ public final class MinestomGameServer {
         this.configJson = configJson;
     }
 
+    public static <T extends GamePlayer> Builder<T> builder(Class<T> ignored) {
+        return new Builder<>();
+    }
+
     public void start(int port) {
         server.start("127.0.0.1", port);
     }
@@ -50,7 +53,7 @@ public final class MinestomGameServer {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    public static <T extends GamePlayer> MinestomGameServer init(GamePlayerProvider<T, Player> gamePlayerProvider, Function<MinestomGameServer, MinestomGame> gameSupplier) throws URISyntaxException, IOException {
+    private static <T extends GamePlayer> MinestomGameServer init(GamePlayerProvider<T, Player> gamePlayerProvider, Function<MinestomGameServer, MinestomGame<T>> gameSupplier) throws URISyntaxException, IOException {
         MinecraftServer server = MinecraftServer.init();
         VelocityProxy.enable(readForwardingSecret());
 
@@ -58,28 +61,25 @@ public final class MinestomGameServer {
         Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
         instance.setGenerator(_ -> {});
 
+
         JsonObject configJson;
 
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(MinestomGameServer.class.getClassLoader().getResourceAsStream("map/config.json")))) {
             configJson = GSON.fromJson(reader, JsonObject.class);
         }
 
-        MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
-            event.setSpawningInstance(instance);
+        MinestomGameServer minestomGameServer = new MinestomGameServer(server, instance, configJson);
+        MinestomGame<T> game = gameSupplier.apply(minestomGameServer);
 
-            Player player = event.getPlayer();
-
-            JsonObject spawnJson = configJson.getAsJsonObject("spawn");
-            double x = spawnJson.get("x").getAsDouble();
-            double y = spawnJson.get("y").getAsDouble();
-            double z = spawnJson.get("z").getAsDouble();
-
-            player.setRespawnPoint(new Pos(x, y, z));
-            player.setGameMode(GameMode.ADVENTURE);
+        MinecraftServer.getGlobalEventHandler().addListener(PlayerSpawnEvent.class, event -> {
+            final Player player = event.getPlayer();
+            game.getPlayerList().addPlayer(gamePlayerProvider.createPlayer(player.getUuid(), player, 0));
         });
 
-        MinestomGameServer minestomGameServer = new MinestomGameServer(server, instance, configJson);
-        gameSupplier.apply(minestomGameServer).start();
+        MinecraftServer.getGlobalEventHandler().addListener(PlayerDisconnectEvent.class, event ->
+                game.getPlayerList().removePlayer(event.getPlayer().getUuid()));
+
+        game.start();
 
         return minestomGameServer;
     }
@@ -93,4 +93,33 @@ public final class MinestomGameServer {
             throw new RuntimeException(exception);
         }
     }
+
+    public static class Builder<T extends GamePlayer> {
+
+        private GamePlayerProvider<T, Player> gamePlayerProvider;
+        private Function<MinestomGameServer, MinestomGame<T>> gameSupplier;
+
+        Builder() {}
+
+        public Builder<T> gamePlayerProvider(GamePlayerProvider<T, Player> gamePlayerProvider) {
+            this.gamePlayerProvider = gamePlayerProvider;
+            return this;
+        }
+
+        public Builder<T> gameSupplier(Function<MinestomGameServer, MinestomGame<T>> gameSupplier) {
+            this.gameSupplier = gameSupplier;
+            return this;
+        }
+
+        public void start(int port) {
+            try {
+                MinestomGameServer.init(gamePlayerProvider, gameSupplier)
+                        .start(port);
+            } catch (URISyntaxException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
+
 }
