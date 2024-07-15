@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import dev.zenqrt.mso.lobby.block.handler.PlayerHeadBlockHandler;
 import dev.zenqrt.mso.lobby.configuration.MSOLobbyConfig;
 import dev.zenqrt.mso.lobby.configuration.PodiumPlacementConfig;
-import dev.zenqrt.mso.lobby.entity.NPC;
+import dev.zenqrt.mso.lobby.entity.PodiumNPC;
 import dev.zenqrt.mso.lobby.gson.deserializers.PosDeserializer;
 import dev.zenqrt.mso.lobby.gson.deserializers.VecDeserializer;
 import dev.zenqrt.mso.lobby.item.ItemRegistry;
@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public final class MSOLobby {
 
@@ -88,7 +89,7 @@ public final class MSOLobby {
     }
 
     private static PodiumDisplay createPodiumDisplay(Instance instance, PodiumPlacementConfig config, Component labelText) {
-        NPC npc = new NPC("???", new PlayerSkin(
+        PodiumNPC npc = new PodiumNPC( "???", new PlayerSkin(
                 "ewogICJ0aW1lc3RhbXAiIDogMTcxODcyNzUxMzgwMCwKICAicHJvZmlsZUlkIiA6ICIwMGI4MDlmY2JlZDQ0YWE3OTcyZWVkOGExY2MyMDg4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJBcmllbF9wb29wIiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzNjZDhmMDI1MDE3ODVkMTZiMDkzZjRkNjU5Njk4YTc5ZmNkNTBhMDA5NGY1MzM0OWQ0OGQ2NjMyZmM2ZTEzMmQiCiAgICB9CiAgfQp9",
                 "oAgvlzDKK8Z9SH51O9N0Tv1L5gml0svg/gGOwgmvivf+hqcO9B3c6tZhZP7uIoOdNl9TVuIA66/B+mTwIG+XqJpJCp90ImkpJmFXEqZ8gdvk+Oi9d97XLmGnMoh+2x93yLXHut69hpO50GTzDy2TQXha54aZsdG5yKrEEkGQdySiVGpzMdGGNsVqGlEFtsYRR0zuB1POgXge2csjQw3vlw0ClJn6fysRgU2ItVUrEICh6CXFt86WZ3bX3m/1NwBHghvFQYEu2Lvs9lHjXduNyPPXnPCZ99v0AOna4t+omYyBZakXqCEKSuYjN+9vd4xMnNtYZ+tXdbD4zo0tHU0++DIhQZfvzA8uxunftilSCqaqGkwhSW9gYSzd7NdOodQWXarSzlVqUGg2Ond8rgn4zA1W706TUKGpwRkxclLsD59+701NLVvzxhCPgu2lkCsLabE1Lm7iJEp7lRjeumu8bBmyCiAtKV6t6gB6Bp7FANzYvq9UFi689zZ093afs+z5p+MUUCm0c4BjaaAtAXfLtvBmGAp6XocI0fReCiJb6FiHmNGhkz0seyuV3y7FnqGCEa6mrN+jmI+wa7ES7AzDrnFVW3HVORa6g51WKmq5qp/7ZsVasHBNVsTi7N13gN/OJA0TXyg9Kje9licORGNoDL4ife2JhmfdAV/bR5YMX+o="
         ));

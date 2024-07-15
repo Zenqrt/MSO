@@ -70,6 +70,10 @@ public class NPC extends Entity {
         this.username = username;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     public void setSkin(PlayerSkin skin) {
         this.skin = skin;
 

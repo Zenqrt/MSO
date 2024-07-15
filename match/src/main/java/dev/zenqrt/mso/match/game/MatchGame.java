@@ -10,10 +10,12 @@ import dev.zenqrt.mso.game.state.GameStateSequence;
 import dev.zenqrt.mso.game.state.pregame.ConfigureIncomingPlayersGameState;
 import dev.zenqrt.mso.game.state.pregame.MinestomPregameGameState;
 import dev.zenqrt.mso.match.Match;
+import dev.zenqrt.mso.match.game.board.Build;
 import dev.zenqrt.mso.match.game.map.MatchConfig;
 import dev.zenqrt.mso.match.game.map.MatchSectionArea;
 import dev.zenqrt.mso.match.game.player.MatchPlayer;
 import dev.zenqrt.mso.match.game.states.BuildMatchingGameState;
+import dev.zenqrt.mso.match.game.states.pregame.PregameSidebarGameState;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.instance.Instance;
 
@@ -46,28 +48,31 @@ public final class MatchGame extends MinestomGame<MatchPlayer> {
                     player.setGameMode(GameMode.ADVENTURE);
                     player.setRespawnPoint(matchSection.spawnPosition().asPosition());
                 }))
+                .addState(new PregameSidebarGameState(getEventNode(), getPlayerList()))
                 .build();
         sequence.addState(pregame);
         sequence.addState(new BuildMatchingGameState(this, getAllBuildsFromResource()));
     }
 
-    private static String[][] getAllBuildsFromResource() {
-        return new String[][] {
+    private static Build[] getAllBuildsFromResource() {
+        return new Build[] {
                 getBuildFromResource("builds/creeper.json")
         };
     }
 
-    private static String[] getBuildFromResource(String path) {
+    private static Build getBuildFromResource(String path) {
         Gson gson = new Gson();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Match.class.getResourceAsStream(path))))) {
-            JsonArray blocksArray = gson.fromJson(reader, JsonObject.class).getAsJsonArray("blocks");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(Match.class.getClassLoader().getResourceAsStream(path))))) {
+            JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+            String displayName = jsonObject.get("display_name").getAsString();
+            JsonArray blocksArray = jsonObject.getAsJsonArray("blocks");
             String[] blocks = new String[blocksArray.size()];
 
             for (int i = 0; i < blocksArray.size(); i++)
                 blocks[i] = blocksArray.get(i).getAsString();
 
-            return blocks;
+            return new Build(displayName, blocks);
         } catch (IOException exception) {
             throw new RuntimeException(exception);
         }

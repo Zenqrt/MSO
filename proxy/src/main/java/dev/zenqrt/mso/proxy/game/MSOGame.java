@@ -62,10 +62,8 @@ public final class MSOGame extends GameState {
 
     @Override
     protected void onStateStart() {
-        System.out.println("Stareting");
         messageConnectionManager.establishConnections();
         state.start();
-        System.out.println("Started");
     }
 
     @Override

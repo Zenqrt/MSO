@@ -9,9 +9,9 @@ public final class Match {
 
     public static void main(String[] args) {
         MinestomGameServer.builder(MatchPlayer.class)
-                .gamePlayerProvider(MatchPlayer::new)
+                .gamePlayerProvider(((uuid, player, score) -> new MatchPlayer(uuid, player, score, 0)))
                 .gameSupplier(server -> new MatchGame(server.getInstance(), MatchConfig.fromJson(server.getConfigJson())))
-                .start(30067);
+                .start(30068);
     }
 
 }

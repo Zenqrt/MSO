@@ -30,10 +30,8 @@ public final class PodiumHandler {
         infoChannelReceiver.establishConnection(ConnectionSettings.HOST, ConnectionSettings.PORT);
         ConnectionSettings.createMessageReceiveListener(infoChannelReceiver, data -> {
             ByteArrayDataInput input = ByteStreams.newDataInput(data);
-
-            System.out.println("received data");
             String line = input.readUTF();
-            System.out.println(line);
+
             if (line.equals("scores")) {
                 int index = 0;
 
@@ -45,7 +43,7 @@ public final class PodiumHandler {
                         String signature = input.readUTF();
                         int score = input.readInt();
 
-                        displays[index++].update(username, new PlayerSkin(textureValue, signature));
+                        displays[index++].update(username, new PlayerSkin(textureValue, signature), score);
                         System.out.println("Score: " + score);
                     } catch (RuntimeException exception) {
                         if (!(exception.getCause() instanceof EOFException)) {

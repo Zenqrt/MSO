@@ -34,13 +34,19 @@ public final class MSOProxy {
         instance = this;
         this.server = server;
         this.logger = logger;
-        
+
+        RegisteredServer tntRunServer = findServer("tnt_run");
+        RegisteredServer oitcServer = findServer("oitc");
 
         this.game = new MSOGame(this, findServer("lobby"), new MSOTournamentGame[]{
-                new MSOTournamentGame("TNT Run", "tnt_run", findServer("tnt_run")),
-                new MSOTournamentGame("One in the Chamber", "oitc", findServer("oitc")),
                 new MSOTournamentGame("Match", "match", findServer("match")),
-                new MSOTournamentGame("Survival Games", "survival_games", findServer("survival_games")),
+                new MSOTournamentGame("TNT Run (Round 1)", "tnt_run", tntRunServer),
+                new MSOTournamentGame("TNT Run (Round 2)", "tnt_run", tntRunServer),
+                new MSOTournamentGame("TNT Run (Round 3)", "tnt_run", tntRunServer),
+                new MSOTournamentGame("One in the Chamber (Round 1)", "oitc", oitcServer),
+                new MSOTournamentGame("One in the Chamber (Round 2)", "oitc", oitcServer),
+                new MSOTournamentGame("One in the Chamber (Round 3)", "oitc", oitcServer),
+                new MSOTournamentGame("Survival Games (Round 1)", "survival_games", findServer("survival_games")),
                 new MSOTournamentGame("Parkour Race", "parkour_race", findServer("parkour_race"))
         });
     }

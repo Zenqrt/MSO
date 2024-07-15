@@ -27,10 +27,7 @@ public final class ActiveGameState extends EventGameState {
 
         this.game = game;
         this.tournamentGame = tournamentGame;
-        this.nextStateListener = ConnectionSettings.createMessageReceiveListener(game.getGameTransferChannelReceiver(), _ -> {
-            System.out.println("Received next_state");
-            game.switchToNextState();
-        });
+        this.nextStateListener = ConnectionSettings.createMessageReceiveListener(game.getGameTransferChannelReceiver(), _ -> game.switchToNextState());
         this.updateLeaderboardListener = ConnectionSettings.createMessageReceiveListener(game.getUpdateChannelReceiver(), data -> {
             ByteArrayDataInput input = ByteStreams.newDataInput(data);
             MSOGamePlayerList playerList = game.getPlayerList();

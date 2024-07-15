@@ -63,7 +63,7 @@ public final class IntermissionGameState extends EventGameState {
             Audience audience = game.getPlayerList().getPlayersAsAudience();
 
             if (timeLeft <= 0) {
-                audience.sendActionBar(Component.text("Starting soon...", NamedTextColor.GRAY));
+                audience.sendActionBar(Component.text("sᴛᴀʀᴛɪɴɢ sᴏᴏɴ...", NamedTextColor.GRAY));
                 return;
             }
 

@@ -5,6 +5,7 @@ import net.kyori.adventure.audience.Audience;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public interface GamePlayerList<T extends GamePlayer> {
@@ -14,6 +15,12 @@ public interface GamePlayerList<T extends GamePlayer> {
     boolean hasPlayer(UUID uuid);
     T getPlayer(UUID uuid);
     Map<UUID, T> getPlayers();
+
+    default T updatePlayer(UUID uuid, Function<T, T> playerUpdateFunction) {
+        T updated = playerUpdateFunction.apply(getPlayer(uuid));
+        updatePlayer(updated);
+        return updated;
+    }
 
     default Audience getPlayersAsAudience() {
         return Audience.audience(getPlayers().values().stream()

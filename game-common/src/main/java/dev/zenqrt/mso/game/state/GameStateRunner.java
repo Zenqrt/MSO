@@ -18,15 +18,10 @@ public final class GameStateRunner implements Runnable {
         currentState.start();
 
         while (true) {
-            System.out.println("Checking2");
             if (currentState.isReadyToEnd()) {
-                System.out.println("Game Runner says we're ready");
-                if (!currentState.end()) {
-                    System.out.println("well");
+                if (!currentState.end())
                     continue;
-                }
 
-                System.out.println("passing");
                 if (currentStateIndex + 1 >= states.size())
                     break;
 
