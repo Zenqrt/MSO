@@ -5,9 +5,7 @@ import dev.zenqrt.mso.text.Messages;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
-import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Player;
-import net.minestom.server.utils.location.RelativeVec;
 
 public final class TeleportCommand extends Command {
 
@@ -17,7 +15,6 @@ public final class TeleportCommand extends Command {
         setCondition((sender, _) -> sender instanceof Player && sender.hasPermission(Permissions.ADMIN));
 
         var targetArgument = ArgumentType.String("target");
-        var positionArgument = ArgumentType.RelativeVec3("position");
 
         addSyntax((sender, context) -> {
             Player player = (Player) sender;
@@ -38,17 +35,6 @@ public final class TeleportCommand extends Command {
 
             player.sendMessage(Messages.success("Teleported to " + target.getUsername()));
         }, targetArgument);
-
-        addSyntax((sender, context) -> {
-            Player player = (Player) sender;
-            RelativeVec relativeVec = context.get(positionArgument);
-            Pos position = relativeVec.from(Pos.ZERO).asPosition()
-                    .withPitch(player.getPosition().pitch())
-                    .withYaw(player.getPosition().yaw());
-
-            player.teleport(position);
-            player.sendMessage(Messages.success("Teleported to (" + position.x() + ", " + position.y() + ", " + position.z() + ")."));
-        }, positionArgument);
     }
 
 }
