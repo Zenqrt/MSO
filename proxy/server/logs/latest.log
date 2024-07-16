@@ -1,30 +1,36 @@
-[11:01:02] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Booting up Velocity 3.3.0-SNAPSHOT (git-e60e2063-b399)...
-[11:01:02] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading localizations...
-[11:01:02] [main/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Connections will use NIO channels, Java compression, Java ciphers
-[11:01:02] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading plugins...
-[11:01:03] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin luckperms 5.4.131 by Luck
-[11:01:03] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin msoproxy 1.0-SNAPSHOT by Walmqrt
-[11:01:03] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loaded 2 plugins
-[11:01:03] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:         __    
-[11:01:03] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |    |__)   LuckPerms v5.4.131
-[11:01:03] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |___ |      Running on Velocity - Velocity
-[11:01:03] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: 
-[11:01:03] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading configuration...
-[11:01:03] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading storage provider... [H2]
-[11:01:04] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading internal permission managers...
-[11:01:04] [Velocity Async Event Executor - #0/INFO] [luckperms]: Performing initial data load...
-[11:01:04] [Velocity Async Event Executor - #0/INFO] [luckperms]: Successfully enabled. (took 1214ms)
-[11:01:04] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy is initializing...
-[11:01:04] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: Start intermission
-[11:01:04] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy has initialized.
-[11:01:04] [Netty NIO Boss #0/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Listening on /[0:0:0:0:0:0:0:0]:25577
-[11:01:04] [main/INFO] [com.velocitypowered.proxy.Velocity]: Done (2.57s)!
-[11:04:21] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.client.AuthSessionHandler]: [connected player] Skymqrt (/127.0.0.1:56867) has connected
-[11:04:21] [Velocity Async Event Executor - #4/INFO] [msoproxy]: Hi
-[11:04:21] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has connected
-[11:04:46] [Netty NIO Worker #15/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: Ending intermission
-[11:04:46] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> match has connected
-[11:04:46] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has disconnected
-[11:06:02] [pool-9-thread-13/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: Start intermission
-[11:06:02] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has connected
-[11:06:02] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> match has disconnected
+[11:19:20] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Booting up Velocity 3.3.0-SNAPSHOT (git-e60e2063-b399)...
+[11:19:20] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading localizations...
+[11:19:21] [main/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Connections will use NIO channels, Java compression, Java ciphers
+[11:19:21] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading plugins...
+[11:19:21] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin luckperms 5.4.131 by Luck
+[11:19:21] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin msoproxy 1.0-SNAPSHOT by Walmqrt
+[11:19:21] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loaded 2 plugins
+[11:19:21] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:         __    
+[11:19:21] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |    |__)   LuckPerms v5.4.131
+[11:19:21] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |___ |      Running on Velocity - Velocity
+[11:19:21] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: 
+[11:19:21] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading configuration...
+[11:19:21] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading storage provider... [H2]
+[11:19:22] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading internal permission managers...
+[11:19:22] [Velocity Async Event Executor - #0/INFO] [luckperms]: Performing initial data load...
+[11:19:22] [Velocity Async Event Executor - #0/INFO] [luckperms]: Successfully enabled. (took 826ms)
+[11:19:22] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy is initializing...
+[11:19:22] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: Start intermission
+[11:19:22] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy has initialized.
+[11:19:22] [Netty NIO Boss #0/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Listening on /[0:0:0:0:0:0:0:0]:25577
+[11:19:22] [main/INFO] [com.velocitypowered.proxy.Velocity]: Done (1.95s)!
+[11:20:50] [Netty NIO Worker #0/INFO] [com.velocitypowered.proxy.connection.client.AuthSessionHandler]: [connected player] Skymqrt (/127.0.0.1:58603) has connected
+[11:20:50] [Velocity Async Event Executor - #4/INFO] [msoproxy]: Hi
+[11:20:50] [Netty NIO Worker #0/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has connected
+[11:21:27] [Netty NIO Worker #12/INFO] [com.velocitypowered.proxy.connection.client.AuthSessionHandler]: [connected player] Walmqrt (/127.0.0.1:58682) has connected
+[11:21:27] [Velocity Async Event Executor - #10/INFO] [msoproxy]: Hi
+[11:21:27] [Netty NIO Worker #12/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has connected
+[11:23:43] [Shutdown thread/INFO] [com.velocitypowered.proxy.VelocityServer]: Shutting down the proxy...
+[11:23:43] [Shutdown thread/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Closing endpoint /0.0.0.0:25577
+[11:23:43] [Netty NIO Worker #0/INFO] [com.velocitypowered.proxy.connection.client.ConnectedPlayer]: [connected player] Skymqrt (/127.0.0.1:58603) has disconnected: Proxy shutting down.
+[11:23:43] [Netty NIO Worker #12/INFO] [com.velocitypowered.proxy.connection.client.ConnectedPlayer]: [connected player] Walmqrt (/127.0.0.1:58682) has disconnected: Proxy shutting down.
+[11:23:43] [Netty NIO Worker #12/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has disconnected
+[11:23:43] [Netty NIO Worker #0/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has disconnected
+[11:23:43] [Velocity Async Event Executor - #1/INFO] [luckperms]: Starting shutdown process...
+[11:23:43] [Velocity Async Event Executor - #1/INFO] [luckperms]: Closing storage...
+[11:23:43] [Velocity Async Event Executor - #1/INFO] [luckperms]: Goodbye!

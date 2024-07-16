@@ -3,6 +3,7 @@ package dev.zenqrt.mso.lobby;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.zenqrt.mso.lobby.block.handler.PlayerHeadBlockHandler;
+import dev.zenqrt.mso.lobby.commands.GamemodeCommand;
 import dev.zenqrt.mso.lobby.configuration.MSOLobbyConfig;
 import dev.zenqrt.mso.lobby.configuration.PodiumPlacementConfig;
 import dev.zenqrt.mso.lobby.entity.podium.PodiumNPC;
@@ -28,6 +29,7 @@ import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.anvil.AnvilLoader;
+import net.minestom.server.permission.Permission;
 import net.minestom.server.scoreboard.Team;
 
 import java.io.BufferedReader;
@@ -57,6 +59,8 @@ public final class MSOLobby {
         Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
         instance.setGenerator(_ -> {});
 
+        MinecraftServer.getCommandManager().register(new GamemodeCommand());
+
         Team adminTeam = MinecraftServer.getTeamManager().createTeam("admin");
         adminTeam.setPrefix(Component.text("ᴀᴅᴍɪɴ ", TextColor.color(0xeb2d2d)).decorate(TextDecoration.BOLD));
 
@@ -69,6 +73,7 @@ public final class MSOLobby {
 
             if (Players.EXCLUDED.contains(player.getUsername())) {
                 adminTeam.addMember(player.getUsername());
+                player.addPermission(new Permission("admin"));
             }
         });
         MinecraftServer.getGlobalEventHandler().addListener(EventListener.builder(PlayerMoveEvent.class)
