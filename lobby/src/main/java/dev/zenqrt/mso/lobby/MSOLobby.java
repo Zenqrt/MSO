@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import dev.zenqrt.mso.lobby.block.handler.PlayerHeadBlockHandler;
 import dev.zenqrt.mso.lobby.configuration.MSOLobbyConfig;
 import dev.zenqrt.mso.lobby.configuration.PodiumPlacementConfig;
-import dev.zenqrt.mso.lobby.entity.PodiumNPC;
+import dev.zenqrt.mso.lobby.entity.podium.PodiumNPC;
 import dev.zenqrt.mso.lobby.gson.deserializers.PosDeserializer;
 import dev.zenqrt.mso.lobby.gson.deserializers.VecDeserializer;
 import dev.zenqrt.mso.lobby.item.ItemRegistry;

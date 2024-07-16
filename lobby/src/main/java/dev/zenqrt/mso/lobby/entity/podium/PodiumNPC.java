@@ -1,5 +1,6 @@
-package dev.zenqrt.mso.lobby.entity;
+package dev.zenqrt.mso.lobby.entity.podium;
 
+import dev.zenqrt.mso.lobby.entity.NPC;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minestom.server.entity.Metadata;

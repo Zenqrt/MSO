@@ -1,6 +1,6 @@
 package dev.zenqrt.mso.lobby.podium;
 
-import dev.zenqrt.mso.lobby.entity.PodiumNPC;
+import dev.zenqrt.mso.lobby.entity.podium.PodiumNPC;
 import dev.zenqrt.mso.lobby.entity.podium.PodiumNPCTag;
 import dev.zenqrt.mso.text.Icons;
 import net.kyori.adventure.text.Component;

@@ -40,7 +40,6 @@ public final class PodiumNPCTag extends Entity {
     public void updateNewViewer(@NotNull Player player) {
         player.sendPacket(this.getEntityType().registry().spawnType().getSpawnPacket(this));
 
-        getMetadataPacket().entries().forEach((id, entry) -> System.out.println("Id: " + id + "\nEntry:\n Type: " + entry.type() + "\n Value: " + entry.value()));
         if (player.getUsername().equals(username)) {
             Map<Integer, Metadata.Entry<?>> entries = new HashMap<>(metadata.getEntries());
             entries.replace(23, Metadata.Chat(Component.text(username, NamedTextColor.AQUA).decorate(TextDecoration.BOLD)));
