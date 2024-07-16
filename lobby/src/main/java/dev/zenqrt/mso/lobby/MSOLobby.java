@@ -12,6 +12,7 @@ import dev.zenqrt.mso.lobby.item.ItemRegistry;
 import dev.zenqrt.mso.lobby.podium.PodiumDisplay;
 import dev.zenqrt.mso.lobby.podium.PodiumHandler;
 import dev.zenqrt.mso.lobby.rainbowman.RainbowManHandler;
+import dev.zenqrt.mso.player.Players;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -27,6 +28,7 @@ import net.minestom.server.event.player.PlayerMoveEvent;
 import net.minestom.server.extras.velocity.VelocityProxy;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.instance.anvil.AnvilLoader;
+import net.minestom.server.scoreboard.Team;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -55,12 +57,19 @@ public final class MSOLobby {
         Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
         instance.setGenerator(_ -> {});
 
+        Team adminTeam = MinecraftServer.getTeamManager().createTeam("admin");
+        adminTeam.setPrefix(Component.text("ᴀᴅᴍɪɴ ", TextColor.color(0xeb2d2d)).decorate(TextDecoration.BOLD));
+
         MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> {
             event.setSpawningInstance(instance);
 
             Player player = event.getPlayer();
             player.setRespawnPoint(new Pos(0.5, 101, 0.5));
             player.setGameMode(GameMode.ADVENTURE);
+
+            if (Players.EXCLUDED.contains(player.getUsername())) {
+                adminTeam.addMember(player.getUsername());
+            }
         });
         MinecraftServer.getGlobalEventHandler().addListener(EventListener.builder(PlayerMoveEvent.class)
                 .filter(event -> event.getNewPosition().y() <= 0)
