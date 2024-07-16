@@ -8,7 +8,6 @@ import dev.zenqrt.mso.match.game.board.Build;
 import dev.zenqrt.mso.match.game.map.MatchSectionArea;
 import dev.zenqrt.mso.match.game.player.MatchPlayer;
 import dev.zenqrt.mso.match.utils.coordinate.Region;
-import dev.zenqrt.mso.match.utils.sidebar.SidebarUtils;
 import dev.zenqrt.mso.match.utils.text.Texts;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -40,14 +39,15 @@ public final class BuildMatchingGameState extends EventGameState {
 
     private final MatchGame game;
     private final Build[] builds;
-    private final Map<Player, Sidebar> sidebars = new HashMap<>();
+    private final Map<Player, Sidebar> sidebars;
     private final TaskManager taskManager;
 
-    public BuildMatchingGameState(MatchGame game, Build[] builds) {
+    public BuildMatchingGameState(MatchGame game, Build[] builds, Map<Player, Sidebar> sidebars) {
         super(game.getEventNode());
 
         this.game = game;
         this.builds = builds;
+        this.sidebars = sidebars;
         this.taskManager = new TaskManager(MinecraftServer.getSchedulerManager());
     }
 
@@ -62,7 +62,6 @@ public final class BuildMatchingGameState extends EventGameState {
             eventNode.addChild(handler.createEventNode());
 
             handler.startBuild();
-            handler.startTasks(taskManager);
         });
     }
 
@@ -76,51 +75,6 @@ public final class BuildMatchingGameState extends EventGameState {
 
             player.setGameMode(GameMode.SURVIVAL);
             player.setInstantBreak(true);
-
-            Sidebar sidebar = SidebarUtils.createGameSidebar();
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "header",
-                    Component.text("ʀᴏᴜɴᴅ sᴄᴏʀᴇ", NamedTextColor.LIGHT_PURPLE),
-                    8
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "first_place",
-                    Texts.placement(1, Component.text("...", NamedTextColor.DARK_GRAY)),
-                    7
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "second_place",
-                    Texts.placement(2, Component.text("...", NamedTextColor.DARK_GRAY)),
-                    6
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "third_place",
-                    Texts.placement(3, Component.text("...", NamedTextColor.DARK_GRAY)),
-                    5
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "empty",
-                    Component.empty(),
-                    4
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "player_score",
-                    Texts.score(0),
-                    3
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "player_stat",
-                    Texts.buildsCompleted(0),
-                    2
-            ));
-            sidebar.createLine(new Sidebar.ScoreboardLine(
-                    "empty2",
-                    Component.empty(),
-                    1
-            ));
-
-            sidebar.addViewer(player);
-            sidebars.put(player, sidebar);
         });
 
     }
@@ -211,11 +165,6 @@ public final class BuildMatchingGameState extends EventGameState {
 
             batch.apply(player.getInstance(), null);
             player.getInventory().addItemStacks(blockItems, TransactionOption.ALL_OR_NOTHING);
-        }
-
-        private void startTasks(TaskManager taskManager) {
-//            taskManager.startTask(() -> player.sendActionBar(Component.text("ᴄᴜʀʀᴇɴᴛ ʙᴜɪʟᴅ: ", TextColorPresets.TEXT)
-//                    .append(Component.text(currentBuild.displayName(), TextColorPresets.ARGUMENT))), TaskSchedule.immediate(), TaskSchedule.tick(1));
         }
 
         private EventNode<PlayerEvent> createEventNode() {

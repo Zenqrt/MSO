@@ -17,7 +17,9 @@ import dev.zenqrt.mso.match.game.player.MatchPlayer;
 import dev.zenqrt.mso.match.game.states.BuildMatchingGameState;
 import dev.zenqrt.mso.match.game.states.pregame.PregameSidebarGameState;
 import net.minestom.server.entity.GameMode;
+import net.minestom.server.entity.Player;
 import net.minestom.server.instance.Instance;
+import net.minestom.server.scoreboard.Sidebar;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,6 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public final class MatchGame extends MinestomGame<MatchPlayer> {
 
     private final Map<UUID, MatchSectionArea> playerSections = new HashMap<>();
+    private final Map<Player, Sidebar> sidebars = new HashMap<>();
     private final MatchConfig config;
     private final AtomicInteger currentMatchSection;
 
@@ -51,10 +54,10 @@ public final class MatchGame extends MinestomGame<MatchPlayer> {
                     player.setGameMode(GameMode.ADVENTURE);
                     player.setRespawnPoint(matchSection.spawnPosition().asPosition());
                 }))
-                .addState(new PregameSidebarGameState(getEventNode(), getPlayerList()))
+                .addState(new PregameSidebarGameState(getEventNode(), getPlayerList(), sidebars))
                 .build();
         sequence.addState(pregame);
-        sequence.addState(new BuildMatchingGameState(this, getAllBuildsFromResource()));
+        sequence.addState(new BuildMatchingGameState(this, getAllBuildsFromResource(), sidebars));
     }
 
     private static Build[] getAllBuildsFromResource() {
