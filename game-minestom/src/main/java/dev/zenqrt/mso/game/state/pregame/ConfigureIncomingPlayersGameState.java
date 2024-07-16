@@ -23,10 +23,7 @@ public final class ConfigureIncomingPlayersGameState extends EventGameState {
 
     @Override
     protected void registerEvents() {
-        eventNode.addListener(AsyncPlayerConfigurationEvent.class, event -> {
-            event.setSpawningInstance(instance);
-            playerConsumer.accept(event.getPlayer());
-        });
+        eventNode.addListener(AsyncPlayerConfigurationEvent.class, event -> playerConsumer.accept(event.getPlayer()));
     }
 
 

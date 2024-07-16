@@ -24,22 +24,21 @@ public final class PodiumNPC extends NPC {
 
         if (player.getUsername().equals(getUsername())) {
             createHighlightTeam(player);
-
             EntityMetaDataPacket packet = new EntityMetaDataPacket(getEntityId(), Map.of(0, Metadata.Byte((byte) 64)));
             player.sendPacket(packet);
         }
     }
 
-    private static void createHighlightTeam(Player player) {
+    private void createHighlightTeam(Player player) {
         TeamsPacket creationPacket = new TeamsPacket("highlight", new TeamsPacket.CreateTeamAction(
                 Component.empty(),
                 (byte) 0,
-                TeamsPacket.NameTagVisibility.ALWAYS,
+                TeamsPacket.NameTagVisibility.NEVER,
                 TeamsPacket.CollisionRule.NEVER,
                 NamedTextColor.AQUA,
                 Component.empty(),
                 Component.empty(),
-                List.of(player.getUsername())
+                List.of(getInternalUsername())
         ));
 
         player.sendPacket(creationPacket);

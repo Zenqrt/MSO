@@ -26,23 +26,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public final class MatchGame extends MinestomGame<MatchPlayer> {
 
     private final Map<UUID, MatchSectionArea> playerSections = new HashMap<>();
     private final MatchConfig config;
-    private int currentMatchSection;
+    private final AtomicInteger currentMatchSection;
 
     public MatchGame(Instance instance, MatchConfig config) {
         super(instance, new HashMapGamePlayerList<>());
         this.config = config;
+        this.currentMatchSection = new AtomicInteger();
     }
 
     @Override
     protected void populateSequence(GameStateSequence sequence) {
         GameState pregame = MinestomPregameGameState.builder(this)
                 .addState(new ConfigureIncomingPlayersGameState(getEventNode(), getInstance(), player -> {
-                    MatchSectionArea matchSection = config.matchSections()[currentMatchSection++];
+                    int index = currentMatchSection.getAndIncrement();
+                    MatchSectionArea matchSection = config.matchSections()[index];
                     playerSections.put(player.getUuid(), matchSection);
 
                     player.setGameMode(GameMode.ADVENTURE);

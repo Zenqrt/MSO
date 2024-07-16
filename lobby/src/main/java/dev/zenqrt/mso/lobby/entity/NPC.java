@@ -8,22 +8,31 @@ import net.minestom.server.network.packet.server.play.*;
 import net.minestom.server.utils.PacketUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class NPC extends Entity {
 
+    private final String internalUsername;
     private String username;
     private PlayerSkin skin;
     private float scale;
 
-    public NPC(String username, PlayerSkin skin) {
+    public NPC(String internalUsername, String username, PlayerSkin skin) {
         super(EntityType.PLAYER);
 
+        this.internalUsername = internalUsername;
         this.username = username;
         this.skin = skin;
+    }
+
+    public NPC(String username, PlayerSkin skin) {
+        this(randomHex(), username, skin);
+    }
+
+    private static String randomHex() {
+        Random random = new Random();
+        int number = random.nextInt(0x10) + 0x10;
+        return Integer.toHexString(number);
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -31,7 +40,7 @@ public class NPC extends Entity {
     public void updateNewViewer(@NotNull Player player) {
         PlayerInfoUpdatePacket.Entry entry = new PlayerInfoUpdatePacket.Entry(
                 getUuid(),
-                username,
+                internalUsername,
                 List.of(new PlayerInfoUpdatePacket.Property("textures", skin.textures(), skin.signature())),
                 false,
                 0,
@@ -72,6 +81,10 @@ public class NPC extends Entity {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getInternalUsername() {
+        return internalUsername;
     }
 
     public void setSkin(PlayerSkin skin) {

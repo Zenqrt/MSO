@@ -9,6 +9,7 @@ import dev.zenqrt.mso.lobby.entity.PodiumNPC;
 import dev.zenqrt.mso.lobby.gson.deserializers.PosDeserializer;
 import dev.zenqrt.mso.lobby.gson.deserializers.VecDeserializer;
 import dev.zenqrt.mso.lobby.item.ItemRegistry;
+import dev.zenqrt.mso.lobby.podium.PodiumDisplay;
 import dev.zenqrt.mso.lobby.podium.PodiumHandler;
 import dev.zenqrt.mso.lobby.rainbowman.RainbowManHandler;
 import net.kyori.adventure.text.Component;
@@ -37,7 +38,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 public final class MSOLobby {
 

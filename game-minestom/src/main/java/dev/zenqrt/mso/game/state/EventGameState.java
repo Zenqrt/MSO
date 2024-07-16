@@ -1,19 +1,22 @@
 package dev.zenqrt.mso.game.state;
 
+import dev.zenqrt.mso.player.Players;
 import net.minestom.server.event.Event;
+import net.minestom.server.event.EventFilter;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.trait.PlayerEvent;
 
 import java.util.UUID;
 
 public abstract class EventGameState extends GameState {
 
-    protected final EventNode<Event> eventNode;
+    protected final EventNode<PlayerEvent> eventNode;
     private final EventNode<Event> parentNode;
     private boolean hasRegisteredEvents;
 
     public EventGameState(EventNode<Event> parentNode) {
         this.parentNode = parentNode;
-        this.eventNode = EventNode.all(UUID.randomUUID().toString());
+        this.eventNode = EventNode.type(UUID.randomUUID().toString(), EventFilter.PLAYER, (_, player) -> !Players.EXCLUDED.contains(player.getUsername()));
     }
 
     protected abstract void registerEvents();

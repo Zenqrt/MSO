@@ -69,7 +69,7 @@ public final class BuildMatchingGameState extends EventGameState {
     @Override
     protected void onStateStart() {
         super.onStateStart();
-        taskManager.startTask(new TimerTask(15), TaskSchedule.immediate(), TaskSchedule.seconds(1));
+        taskManager.startTask(new TimerTask(60), TaskSchedule.immediate(), TaskSchedule.seconds(1));
 
         game.getPlayerList().forEach(gamePlayer -> {
             Player player = gamePlayer.player();

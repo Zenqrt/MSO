@@ -2,7 +2,6 @@ package dev.zenqrt.mso.lobby.podium;
 
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteStreams;
-import dev.zenqrt.mso.lobby.PodiumDisplay;
 import dev.zenqrt.mso.messenger.Channels;
 import dev.zenqrt.mso.messenger.ConnectionSettings;
 import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
@@ -37,14 +36,13 @@ public final class PodiumHandler {
 
                 while (true) {
                     try {
-                        String uuidString = input.readUTF();
+                        String _ = input.readUTF();
                         String username = input.readUTF();
                         String textureValue = input.readUTF();
                         String signature = input.readUTF();
                         int score = input.readInt();
 
                         displays[index++].update(username, new PlayerSkin(textureValue, signature), score);
-                        System.out.println("Score: " + score);
                     } catch (RuntimeException exception) {
                         if (!(exception.getCause() instanceof EOFException)) {
                             return;

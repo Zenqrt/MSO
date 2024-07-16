@@ -7,6 +7,7 @@ import dev.zenqrt.mso.messenger.MessageConnectionManager;
 import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
 import dev.zenqrt.mso.messenger.SingleChannelMessageSender;
 import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessenger;
+import dev.zenqrt.mso.player.Players;
 import dev.zenqrt.mso.proxy.MSOProxy;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayer;
 import dev.zenqrt.mso.proxy.game.player.MSOGamePlayerList;
@@ -45,7 +46,8 @@ public final class MSOGame extends GameState {
 
         this.games = games;
         this.leaderboard = new Leaderboard(3, playerList, (gamePlayers, places) -> gamePlayers.stream()
-                .sorted(Comparator.comparingInt(MSOGamePlayer::score))
+                .filter(gamePlayer -> !Players.EXCLUDED.contains(gamePlayer.player().getUsername()))
+                .sorted(Comparator.comparing(MSOGamePlayer::score, (score, otherScore) -> Integer.compare(otherScore, score)))
                 .limit(places)
                 .toArray(MSOGamePlayer[]::new));
         this.currentGame = games[0];

@@ -2,10 +2,15 @@ package dev.zenqrt.mso.game;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dev.zenqrt.mso.game.commands.TeleportCommand;
+import dev.zenqrt.mso.game.permission.Permissions;
 import dev.zenqrt.mso.game.player.GamePlayer;
 import dev.zenqrt.mso.game.player.GamePlayerProvider;
+import dev.zenqrt.mso.player.Players;
 import net.minestom.server.MinecraftServer;
+import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.event.player.PlayerDisconnectEvent;
 import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.extras.velocity.VelocityProxy;
@@ -61,21 +66,29 @@ public final class MinestomGameServer {
         Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
         instance.setGenerator(_ -> {});
 
-
         JsonObject configJson;
 
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(MinestomGameServer.class.getClassLoader().getResourceAsStream("map/config.json")))) {
             configJson = GSON.fromJson(reader, JsonObject.class);
         }
 
+        MinecraftServer.getCommandManager().register(new TeleportCommand());
+
         MinestomGameServer minestomGameServer = new MinestomGameServer(server, instance, configJson);
         MinestomGame<T> game = gameSupplier.apply(minestomGameServer);
 
+        MinecraftServer.getGlobalEventHandler().addListener(AsyncPlayerConfigurationEvent.class, event -> event.setSpawningInstance(instance));
         MinecraftServer.getGlobalEventHandler().addListener(PlayerSpawnEvent.class, event -> {
             final Player player = event.getPlayer();
+
+            if (Players.EXCLUDED.contains(player.getUsername())) {
+                player.setGameMode(GameMode.SPECTATOR);
+                player.setInvisible(true);
+                player.addPermission(Permissions.ADMIN);
+                return;
+            }
             game.getPlayerList().addPlayer(gamePlayerProvider.createPlayer(player.getUuid(), player, 0));
         });
-
         MinecraftServer.getGlobalEventHandler().addListener(PlayerDisconnectEvent.class, event ->
                 game.getPlayerList().removePlayer(event.getPlayer().getUuid()));
 
