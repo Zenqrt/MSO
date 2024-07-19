@@ -1,11 +1,11 @@
 package dev.zenqrt.mso.match.game.player;
 
-import dev.zenqrt.mso.game.player.GamePlayer;
+import dev.zenqrt.mso.game.player.MinestomGamePlayer;
 import net.minestom.server.entity.Player;
 
 import java.util.UUID;
 
-public record MatchPlayer(UUID uuid, Player player, int score, int buildsCompleted) implements GamePlayer {
+public record MatchPlayer(UUID uuid, Player player, int score, int buildsCompleted) implements MinestomGamePlayer {
 
     @Override
     public MatchPlayer withScore(int score) {

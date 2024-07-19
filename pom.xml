@@ -16,11 +16,14 @@
         <module>game-minestom</module>
         <module>mso-common</module>
         <module>match</module>
+        <module>oitc</module>
+        <module>parkour_race</module>
     </modules>
 
     <properties>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <minestom.version>e5372fd779</minestom.version>
     </properties>
 </project>

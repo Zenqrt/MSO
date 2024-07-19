@@ -26,9 +26,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.Minestom</groupId>
-            <artifactId>Minestom</artifactId>
-            <version>-SNAPSHOT</version>
+            <groupId>net.minestom</groupId>
+            <artifactId>minestom-snapshots</artifactId>
+            <version>${minestom.version}</version>
         </dependency>
         <dependency>
             <groupId>net.kyori</groupId>

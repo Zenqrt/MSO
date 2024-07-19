@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dev.zenqrt.mso.game.commands.TeleportCommand;
 import dev.zenqrt.mso.game.permission.Permissions;
-import dev.zenqrt.mso.game.player.GamePlayer;
 import dev.zenqrt.mso.game.player.GamePlayerProvider;
+import dev.zenqrt.mso.game.player.MinestomGamePlayer;
 import dev.zenqrt.mso.player.Players;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.entity.GameMode;
@@ -41,7 +41,7 @@ public final class MinestomGameServer {
         this.configJson = configJson;
     }
 
-    public static <T extends GamePlayer> Builder<T> builder(Class<T> ignored) {
+    public static <T extends MinestomGamePlayer> Builder<T> builder(Class<T> ignored) {
         return new Builder<>();
     }
 
@@ -58,7 +58,7 @@ public final class MinestomGameServer {
     }
 
     @SuppressWarnings("UnstableApiUsage")
-    private static <T extends GamePlayer> MinestomGameServer init(GamePlayerProvider<T, Player> gamePlayerProvider, Function<MinestomGameServer, MinestomGame<T>> gameSupplier) throws URISyntaxException, IOException {
+    private static <T extends MinestomGamePlayer> MinestomGameServer init(GamePlayerProvider<T, Player> gamePlayerProvider, Function<MinestomGameServer, MinestomGame<T>> gameSupplier) throws URISyntaxException, IOException {
         MinecraftServer server = MinecraftServer.init();
         VelocityProxy.enable(readForwardingSecret());
 
@@ -81,7 +81,7 @@ public final class MinestomGameServer {
         MinecraftServer.getGlobalEventHandler().addListener(PlayerSpawnEvent.class, event -> {
             final Player player = event.getPlayer();
 
-            if (Players.EXCLUDED.contains(player.getUsername())) {
+            if (Players.isExcluded(player.getUsername())) {
                 player.setGameMode(GameMode.SPECTATOR);
                 player.setInvisible(true);
                 player.addPermission(Permissions.ADMIN);
@@ -107,7 +107,7 @@ public final class MinestomGameServer {
         }
     }
 
-    public static class Builder<T extends GamePlayer> {
+    public static class Builder<T extends MinestomGamePlayer> {
 
         private GamePlayerProvider<T, Player> gamePlayerProvider;
         private Function<MinestomGameServer, MinestomGame<T>> gameSupplier;
@@ -124,13 +124,16 @@ public final class MinestomGameServer {
             return this;
         }
 
-        public void start(int port) {
+        public MinestomGameServer build() {
             try {
-                MinestomGameServer.init(gamePlayerProvider, gameSupplier)
-                        .start(port);
+                return MinestomGameServer.init(gamePlayerProvider, gameSupplier);
             } catch (URISyntaxException | IOException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        public void start(int port) {
+            build().start(port);
         }
 
     }

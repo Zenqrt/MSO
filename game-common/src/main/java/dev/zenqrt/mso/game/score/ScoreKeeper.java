@@ -29,10 +29,27 @@ public final class ScoreKeeper {
          addPlacementScore(topPlayers.get(3), THIRD_PLACE, "3rd");
      }
 
+     public void addFirstPlaceScore(UUID uuid, Audience player) {
+         addPlacementScore(uuid, player, FIRST_PLACE, "1st");
+     }
+
+     public void addSecondPlaceScore(UUID uuid, Audience player) {
+         addPlacementScore(uuid, player, SECOND_PLACE, "2nd");
+     }
+
+     public void addThirdPlaceScore(UUID uuid, Audience player) {
+         addPlacementScore(uuid, player, THIRD_PLACE, "3rd");
+     }
+
      private void addPlacementScore(GamePlayer topPlayer, int score, String place) {
          if (topPlayer == null)
              return;
-         addScore(topPlayer.uuid(), topPlayer.player(), score, place + " place");
+
+         addPlacementScore(topPlayer.uuid(), topPlayer.player(), score, place);
+     }
+
+     private void addPlacementScore(UUID uuid, Audience player, int score, String place) {
+         addScore(uuid, player, score, place + " place");
      }
 
      public int getScore(UUID uuid) {

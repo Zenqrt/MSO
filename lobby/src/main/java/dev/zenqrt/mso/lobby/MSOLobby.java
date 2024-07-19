@@ -71,7 +71,7 @@ public final class MSOLobby {
             player.setRespawnPoint(new Pos(0.5, 101, 0.5));
             player.setGameMode(GameMode.ADVENTURE);
 
-            if (Players.EXCLUDED.contains(player.getUsername())) {
+            if (Players.isAdmin(player.getUsername())) {
                 adminTeam.addMember(player.getUsername());
                 player.addPermission(new Permission("admin"));
             }

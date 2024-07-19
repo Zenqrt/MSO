@@ -38,7 +38,5 @@ public final class TNTRunGame extends MinestomGame<TNTRunPlayer> {
 
         sequence.addState(new RunningGameState(getEventNode(), this, config, topPlayers));
         sequence.addState(new StatisticShowcaseGameState(this, topPlayers));
-
-        System.out.println("Create sequence");
     }
 }

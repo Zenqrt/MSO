@@ -29,7 +29,6 @@ public final class IntermissionGameState extends EventGameState {
     protected void onStateStart() {
         super.onStateStart();
 
-        System.out.println("Start intermission");
         ConnectionUtils.sendAllPlayersToServer(plugin.getServer(), game.getLobbyServer());
         game.getInfoChannelSender().sendMessageAsync("lobby", output -> {
             output.writeUTF("next_game");
@@ -43,7 +42,6 @@ public final class IntermissionGameState extends EventGameState {
 
     @Override
     protected void onStateEnd() {
-        System.out.println("Ending intermission");
         super.onStateEnd();
         timerTask.cancel();
     }

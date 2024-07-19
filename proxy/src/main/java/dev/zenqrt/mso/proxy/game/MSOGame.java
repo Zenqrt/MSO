@@ -46,7 +46,7 @@ public final class MSOGame extends GameState {
 
         this.games = games;
         this.leaderboard = new Leaderboard(3, playerList, (gamePlayers, places) -> gamePlayers.stream()
-                .filter(gamePlayer -> !Players.EXCLUDED.contains(gamePlayer.player().getUsername()))
+                .filter(gamePlayer -> !Players.isExcluded(gamePlayer.player().getUsername()))
                 .sorted(Comparator.comparing(MSOGamePlayer::score, (score, otherScore) -> Integer.compare(otherScore, score)))
                 .limit(places)
                 .toArray(MSOGamePlayer[]::new));

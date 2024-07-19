@@ -1,5 +1,6 @@
 package dev.zenqrt.mso.match.game.states;
 
+import dev.zenqrt.mso.game.sidebar.GameSidebar;
 import dev.zenqrt.mso.game.state.EventGameState;
 import dev.zenqrt.mso.game.task.TaskManager;
 import dev.zenqrt.mso.match.game.MatchGame;
@@ -8,7 +9,6 @@ import dev.zenqrt.mso.match.game.board.Build;
 import dev.zenqrt.mso.match.game.map.MatchSectionArea;
 import dev.zenqrt.mso.match.game.player.MatchPlayer;
 import dev.zenqrt.mso.match.utils.coordinate.Region;
-import dev.zenqrt.mso.match.utils.text.Texts;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -29,7 +29,6 @@ import net.minestom.server.instance.block.Block;
 import net.minestom.server.inventory.TransactionOption;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
-import net.minestom.server.scoreboard.Sidebar;
 import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.utils.validate.Check;
 
@@ -39,10 +38,10 @@ public final class BuildMatchingGameState extends EventGameState {
 
     private final MatchGame game;
     private final Build[] builds;
-    private final Map<Player, Sidebar> sidebars;
+    private final Map<Player, GameSidebar> sidebars;
     private final TaskManager taskManager;
 
-    public BuildMatchingGameState(MatchGame game, Build[] builds, Map<Player, Sidebar> sidebars) {
+    public BuildMatchingGameState(MatchGame game, Build[] builds, Map<Player, GameSidebar> sidebars) {
         super(game.getEventNode());
 
         this.game = game;
@@ -208,14 +207,13 @@ public final class BuildMatchingGameState extends EventGameState {
             clearPlacementBoard();
             player.getInventory().clear();
 
-            game.getScoreKeeper().addScore(player.getUuid(), player, 1, "ʙᴜɪʟᴅ ᴄᴏᴍᴘʟᴇᴛᴇᴅ");
+            game.getScoreKeeper().addScore(player.getUuid(), player, 1, "Build completed");
 
             UUID uuid = player.getUuid();
-            MatchPlayer updatedPlayer = game.getPlayerList().updatePlayer(uuid, MatchPlayer::addBuildsCompleted);
+            game.getPlayerList().updatePlayer(uuid, MatchPlayer::addBuildsCompleted);
 
-            Sidebar sidebar = sidebars.get(player);
-            sidebar.updateLineContent("player_stat", Texts.buildsCompleted(updatedPlayer.buildsCompleted()));
-            sidebar.updateLineContent("player_score", Texts.score(game.getScoreKeeper().getScore(uuid)));
+            GameSidebar sidebar = sidebars.get(player);
+            sidebar.updateScore(game.getScoreKeeper().getScore(uuid));
 
             if (++currentBuildIndex >= builds.length)
                 currentBuildIndex = 0;

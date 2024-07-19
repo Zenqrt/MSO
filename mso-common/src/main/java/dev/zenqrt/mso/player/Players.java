@@ -1,11 +1,20 @@
 package dev.zenqrt.mso.player;
 
-import java.util.List;
+import java.util.Set;
 
 public final class Players {
 
-    public static List<String> EXCLUDED = List.of("Walmqrt");
+    private static final Set<String> ADMINS = Set.of("Walmqrt");
+    private static final Set<String> EXCLUDED = Set.of();
 
     private Players() {}
+
+    public static boolean isAdmin(String username) {
+        return ADMINS.contains(username);
+    }
+
+    public static boolean isExcluded(String username) {
+        return EXCLUDED.contains(username);
+    }
 
 }

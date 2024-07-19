@@ -1,7 +1,7 @@
 package dev.zenqrt.mso.game;
 
-import dev.zenqrt.mso.game.player.GamePlayer;
 import dev.zenqrt.mso.game.player.GamePlayerList;
+import dev.zenqrt.mso.game.player.MinestomGamePlayer;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventNode;
@@ -10,7 +10,7 @@ import net.minestom.server.timer.TaskSchedule;
 
 import java.util.concurrent.CompletableFuture;
 
-public abstract class MinestomGame<T extends GamePlayer> extends Game<T> {
+public abstract class MinestomGame<T extends MinestomGamePlayer> extends Game<T> {
 
     private final EventNode<Event> eventNode = EventNode.all("minestom-game");
     private final EventNode<Event> parentNode;

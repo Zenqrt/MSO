@@ -16,8 +16,15 @@ public final class TaskManager {
         this.scheduler = scheduler;
     }
 
-    public void startTask(Runnable runnable, TaskSchedule delay, TaskSchedule interval) {
-        tasks.add(scheduler.scheduleTask(runnable, delay, interval));
+    public Task startTask(Runnable runnable, TaskSchedule delay, TaskSchedule interval) {
+        Task task = scheduler.scheduleTask(runnable, delay, interval);
+        tasks.add(task);
+        return task;
+    }
+
+    public void stopTask(Task task) {
+        task.cancel();
+        tasks.remove(task);
     }
 
     public void shutdownAllTasks() {

@@ -14,7 +14,7 @@ public final class MinestomPregameGameState extends PregameGameState {
 
     public static GameState createPregame(MinestomGame<?> game, Consumer<Player> playerConfigureHandler) {
           return builder(game)
-                  .addState(new ConfigureIncomingPlayersGameState(game.getEventNode(), game.getInstance(), playerConfigureHandler))
+                  .addState(new ConfigureIncomingPlayersGameState(game.getEventNode(), playerConfigureHandler))
                   .build();
     }
 

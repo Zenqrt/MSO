@@ -24,9 +24,7 @@ public final class MinestomCountdownGameState extends GameState {
 
     @Override
     protected void onStateEnd() {
-        System.out.println("Countdown ending");
         if (timerTask != null && timerTask.isAlive())
             timerTask.cancel();
-        System.out.println("Countdown ended");
     }
 }
