@@ -53,7 +53,7 @@ public final class ActiveGameState extends EventGameState {
             game.getInfoChannelSender().sendMessage("lobby", output -> {
                 output.writeUTF("scores");
 
-                for (MSOGamePlayer topPlayer : game.getLeaderboard().getTopPlayers()) {
+                for (MSOGamePlayer topPlayer : playerList.getPlayers().values()) {
                     if (topPlayer == null)
                         break;
 

@@ -1,9 +1,11 @@
 package dev.zenqrt.mso.parkourrace.game.states;
 
 import dev.zenqrt.mso.game.state.GameState;
-import map.ParkourRaceConfig;
+import dev.zenqrt.mso.parkourrace.map.Checkpoint;
+import dev.zenqrt.mso.parkourrace.map.ParkourRaceConfig;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.Entity;
 import net.minestom.server.entity.EntityType;
@@ -23,13 +25,13 @@ public final class DisplayCheckpointsGameState extends GameState {
 
     @Override
     protected void onStateStart() {
-        Pos[] checkpoints = config.checkpoints();
+        Checkpoint[] checkpoints = config.checkpoints();
 
         for (int i = 0; i < checkpoints.length; i++) {
-            Pos checkpoint = checkpoints[i];
+            Pos checkpoint = checkpoints[i].spawn();
 
             Entity textDisplay = new Entity(EntityType.TEXT_DISPLAY);
-            Component text = Component.text("Checkpoint #" + (i + 1), NamedTextColor.GREEN);
+            Component text = Component.text("Checkpoint #" + (i + 1), NamedTextColor.GREEN).decorate(TextDecoration.BOLD);
             textDisplay.editEntityMeta(TextDisplayMeta.class, meta -> {
                 meta.setText(text);
                 meta.setBillboardRenderConstraints(AbstractDisplayMeta.BillboardConstraints.CENTER);

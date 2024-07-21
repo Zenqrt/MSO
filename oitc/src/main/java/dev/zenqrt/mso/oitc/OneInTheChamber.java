@@ -15,6 +15,7 @@ public final class OneInTheChamber {
                 .build();
 
         MinestomPvP.init();
+        gameServer.getInstance().setTime(13000);
         gameServer.start(30067);
     }
 

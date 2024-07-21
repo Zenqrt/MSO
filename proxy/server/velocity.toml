@@ -76,7 +76,7 @@ lobby = "127.0.0.1:25565"
 tnt_run = "127.0.0.1:30066"
 oitc = "127.0.0.1:30067"
 match = "127.0.0.1:30068"
-survival_games = "127.0.0.1:30069"
+spleef = "127.0.0.1:30069"
 parkour_race = "127.0.0.1:30070"
 
 # In what order we should try servers when a player logs in or is kicked from a server.

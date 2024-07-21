@@ -1,85 +1,30 @@
-[22:33:54] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Booting up Velocity 3.3.0-SNAPSHOT (git-e60e2063-b399)...
-[22:33:55] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading localizations...
-[22:33:55] [main/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Connections will use NIO channels, Java compression, Java ciphers
-[22:33:55] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading plugins...
-[22:33:55] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin luckperms 5.4.131 by Luck
-[22:33:55] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin msoproxy 1.0-SNAPSHOT by Walmqrt
-[22:33:55] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loaded 2 plugins
-[22:33:55] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:         __    
-[22:33:55] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |    |__)   LuckPerms v5.4.131
-[22:33:55] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |___ |      Running on Velocity - Velocity
-[22:33:55] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: 
-[22:33:55] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading configuration...
-[22:33:55] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading storage provider... [H2]
-[22:33:56] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading internal permission managers...
-[22:33:56] [Velocity Async Event Executor - #0/INFO] [luckperms]: Performing initial data load...
-[22:33:56] [Velocity Async Event Executor - #0/INFO] [luckperms]: Successfully enabled. (took 747ms)
-[22:33:56] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy is initializing...
-[22:33:56] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy has initialized.
-[22:33:56] [Netty NIO Boss #0/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Listening on /[0:0:0:0:0:0:0:0]:25577
-[22:33:56] [main/INFO] [com.velocitypowered.proxy.Velocity]: Done (1.8s)!
-[22:36:37] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.client.AuthSessionHandler]: [connected player] Walmqrt (/127.0.0.1:56437) has connected
-[22:36:37] [Velocity Async Event Executor - #4/INFO] [msoproxy]: Hi
-[22:36:37] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has connected
-[22:36:49] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> parkour_race has connected
-[22:36:49] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has disconnected
-[22:36:52] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.client.AuthSessionHandler]: [connected player] Skymqrt (/127.0.0.1:56494) has connected
-[22:36:52] [Velocity Async Event Executor - #11/INFO] [msoproxy]: Hi
-[22:36:52] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has connected
-[22:36:54] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> parkour_race has connected
-[22:36:54] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has disconnected
-[22:37:27] [Netty NIO Worker #13/ERROR] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> parkour_race: exception encountered in com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler@5aeebe16
-java.net.SocketException: Connection reset
-	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:403) ~[?:?]
-	at java.base/sun.nio.ch.SocketChannelImpl.implRead(SocketChannelImpl.java:435) ~[?:?]
-	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:493) ~[?:?]
-	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:255) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:357) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
-[22:37:27] [Netty NIO Worker #1/ERROR] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> parkour_race: exception encountered in com.velocitypowered.proxy.connection.backend.BackendPlaySessionHandler@6f724924
-java.net.SocketException: Connection reset
-	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:403) ~[?:?]
-	at java.base/sun.nio.ch.SocketChannelImpl.implRead(SocketChannelImpl.java:435) ~[?:?]
-	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:493) ~[?:?]
-	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:255) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:357) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:788) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:724) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:650) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:562) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:997) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30) ~[server.jar:3.3.0-SNAPSHOT (git-e60e2063-b399)]
-	at java.base/java.lang.Thread.run(Thread.java:1570) [?:?]
-[22:37:27] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> parkour_race has disconnected
-[22:37:27] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> parkour_race has disconnected
-[22:37:27] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has connected
-[22:37:27] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has connected
-[22:38:01] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> parkour_race has connected
-[22:38:01] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has disconnected
-[22:38:03] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> parkour_race has connected
-[22:38:03] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has disconnected
-[22:38:32] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has connected
-[22:38:32] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has connected
-[22:38:32] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> parkour_race has disconnected
-[22:38:32] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> parkour_race has disconnected
-[22:38:59] [Shutdown thread/INFO] [com.velocitypowered.proxy.VelocityServer]: Shutting down the proxy...
-[22:38:59] [Shutdown thread/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Closing endpoint /0.0.0.0:25577
-[22:38:59] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.client.ConnectedPlayer]: [connected player] Skymqrt (/127.0.0.1:56494) has disconnected: Proxy shutting down.
-[22:38:59] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.client.ConnectedPlayer]: [connected player] Walmqrt (/127.0.0.1:56437) has disconnected: Proxy shutting down.
-[22:38:59] [Netty NIO Worker #13/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Skymqrt -> lobby has disconnected
-[22:38:59] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has disconnected
-[22:38:59] [Velocity Async Event Executor - #9/INFO] [luckperms]: Starting shutdown process...
-[22:38:59] [Velocity Async Event Executor - #9/INFO] [luckperms]: Closing storage...
-[22:38:59] [Velocity Async Event Executor - #9/INFO] [luckperms]: Goodbye!
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Booting up Velocity 3.3.0-SNAPSHOT (git-e60e2063-b399)...
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading localizations...
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Connections will use NIO channels, Java compression, Java ciphers
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loading plugins...
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin luckperms 5.4.131 by Luck
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.plugin.VelocityPluginManager]: Loaded plugin msoproxy 1.0-SNAPSHOT by Walmqrt
+[16:21:16] [main/INFO] [com.velocitypowered.proxy.VelocityServer]: Loaded 2 plugins
+[16:21:16] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:         __    
+[16:21:16] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |    |__)   LuckPerms v5.4.131
+[16:21:16] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]:   |___ |      Running on Velocity - Velocity
+[16:21:16] [Velocity Async Event Executor - #0/INFO] [com.velocitypowered.proxy.console.VelocityConsole]: 
+[16:21:16] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading configuration...
+[16:21:17] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading storage provider... [H2]
+[16:21:17] [Velocity Async Event Executor - #0/INFO] [luckperms]: Loading internal permission managers...
+[16:21:17] [Velocity Async Event Executor - #0/INFO] [luckperms]: Performing initial data load...
+[16:21:17] [Velocity Async Event Executor - #0/INFO] [luckperms]: Successfully enabled. (took 866ms)
+[16:21:17] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy is initializing...
+[16:21:17] [Velocity Async Event Executor - #0/INFO] [msoproxy]: MSOProxy has initialized.
+[16:21:17] [Netty NIO Boss #0/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Listening on /[0:0:0:0:0:0:0:0]:25577
+[16:21:17] [main/INFO] [com.velocitypowered.proxy.Velocity]: Done (2s)!
+[16:21:19] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.client.AuthSessionHandler]: [connected player] Walmqrt (/127.0.0.1:57423) has connected
+[16:21:19] [Velocity Async Event Executor - #4/INFO] [msoproxy]: Hi
+[16:21:19] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has connected
+[16:33:15] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [connected player] Walmqrt (/127.0.0.1:57423) has disconnected
+[16:33:15] [Netty NIO Worker #1/INFO] [com.velocitypowered.proxy.connection.MinecraftConnection]: [server connection] Walmqrt -> lobby has disconnected
+[16:45:58] [Shutdown thread/INFO] [com.velocitypowered.proxy.VelocityServer]: Shutting down the proxy...
+[16:45:58] [Shutdown thread/INFO] [com.velocitypowered.proxy.network.ConnectionManager]: Closing endpoint /0.0.0.0:25577
+[16:45:58] [Velocity Async Event Executor - #7/INFO] [luckperms]: Starting shutdown process...
+[16:45:58] [Velocity Async Event Executor - #7/INFO] [luckperms]: Closing storage...
+[16:45:58] [Velocity Async Event Executor - #7/INFO] [luckperms]: Goodbye!

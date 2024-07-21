@@ -1,8 +1,8 @@
 package dev.zenqrt.mso.parkourrace.sidebar;
 
 import dev.zenqrt.mso.game.player.GamePlayerList;
-import dev.zenqrt.mso.game.utils.Texts;
 import dev.zenqrt.mso.parkourrace.game.player.ParkourRacePlayer;
+import dev.zenqrt.mso.sidebar.SidebarTexts;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -52,7 +52,7 @@ public final class ParkourRaceSidebar extends Sidebar {
     }
 
     private static Component getEmptyStandingComponent(int placement) {
-        return Texts.placement(placement, Component.text("...", NamedTextColor.DARK_GRAY));
+        return SidebarTexts.placement(placement, Component.text("...", NamedTextColor.DARK_GRAY));
     }
 
     private Component getStandingComponent(int placement, ParkourRacePlayer gamePlayer) {
@@ -66,7 +66,7 @@ public final class ParkourRaceSidebar extends Sidebar {
         } else {
             component = component.append(Component.text("#" + gamePlayer.checkpointNumber(), NamedTextColor.YELLOW));
         }
-        return Texts.placement(placement, component);
+        return SidebarTexts.placement(placement, component);
     }
 
     public void updateCheckpoint(int checkpoint) {

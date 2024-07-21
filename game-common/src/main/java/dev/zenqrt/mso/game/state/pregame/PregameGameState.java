@@ -24,7 +24,7 @@ public class PregameGameState extends GameStateSequence {
         }
 
         public GameState build() {
-            return new PlayerJoinGameStateGroup(countdownGameState, Collections.unmodifiableList(states));
+            return new GameStateGroup(countdownGameState, Collections.unmodifiableList(states));
         }
 
     }

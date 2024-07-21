@@ -5,10 +5,11 @@ import dev.zenqrt.mso.game.score.ScoreKeeper;
 import dev.zenqrt.mso.game.state.EventGameState;
 import dev.zenqrt.mso.game.task.TaskManager;
 import dev.zenqrt.mso.parkourrace.game.player.ParkourRacePlayer;
+import dev.zenqrt.mso.parkourrace.map.Checkpoint;
 import dev.zenqrt.mso.parkourrace.sidebar.ParkourRaceSidebar;
 import dev.zenqrt.mso.text.TextColorPresets;
 import it.unimi.dsi.fastutil.Pair;
-import map.ParkourRaceConfig;
+import dev.zenqrt.mso.parkourrace.map.ParkourRaceConfig;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
@@ -25,8 +26,13 @@ import net.minestom.server.entity.Player;
 import net.minestom.server.event.Event;
 import net.minestom.server.event.EventListener;
 import net.minestom.server.event.EventNode;
+import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.player.PlayerMoveEvent;
+import net.minestom.server.event.player.PlayerUseItemEvent;
+import net.minestom.server.item.ItemStack;
+import net.minestom.server.item.Material;
 import net.minestom.server.sound.SoundEvent;
+import net.minestom.server.tag.Tag;
 import net.minestom.server.timer.TaskSchedule;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,6 +41,7 @@ import java.util.*;
 
 public final class RaceGameState extends EventGameState {
 
+    private static final Tag<String> ITEM_ID = Tag.String("item_id");
     private final GamePlayerList<ParkourRacePlayer> playerList;
     private final ParkourRaceConfig config;
     private final ScoreKeeper scoreKeeper;
@@ -55,6 +62,12 @@ public final class RaceGameState extends EventGameState {
 
     @Override
     protected void registerEvents() {
+        eventNode.addListener(PlayerUseItemEvent.class, event -> {
+            if (event.getItemStack().hasTag(ITEM_ID) && event.getItemStack().getTag(ITEM_ID).equals("warp")) {
+                event.getPlayer().teleport(event.getPlayer().getRespawnPoint());
+            }
+        });
+        eventNode.addListener(ItemDropEvent.class, event -> event.setCancelled(true));
         eventNode.addListener(EventListener.builder(PlayerMoveEvent.class)
                 .filter(event -> event.getNewPosition().y() <= 0)
                 .handler(event -> {
@@ -73,7 +86,7 @@ public final class RaceGameState extends EventGameState {
                     Pos position = event.getNewPosition();
 
                     if (gamePlayer.checkpointNumber() == config.checkpoints().length) {
-                        if (!position.sameBlock(config.finish()))
+                        if (!config.finish().isInRegion(position))
                             return;
 
                         finished.add(uuid);
@@ -99,9 +112,9 @@ public final class RaceGameState extends EventGameState {
                                         builder.matchLiteral("{place}")
                                                 .replacement(Component.text(placeFinished + getPlaceSuffix(placeFinished) + " place", NamedTextColor.AQUA)));
 
-                        if (timerTask.timeLeft > 60 && placeFinished == 1) {
-                            finishMessage = finishMessage.append(Component.text(" Timer has shortened to 60 seconds.", NamedTextColor.GRAY));
-                            timerTask.timeLeft = 60;
+                        if (timerTask.timeLeft > 300 && placeFinished == 1) {
+                            finishMessage = finishMessage.append(Component.text(" Timer has shortened to 5 minutes.", NamedTextColor.GRAY));
+                            timerTask.timeLeft = 300;
                         }
 
                         Audience audience = playerList.getPlayersAsAudience();
@@ -114,19 +127,19 @@ public final class RaceGameState extends EventGameState {
                         return;
                     }
 
-                    Pair<Integer, Pos> checkpoint = findCheckpoint(position, config.checkpoints());
+                    Pair<Integer, Checkpoint> checkpoint = findCheckpoint(position, config.checkpoints());
 
-                    if (checkpoint == null)
+                    if (checkpoint == null) {
                         return;
+                    }
+                    System.out.println(checkpoint.key());
 
                     int checkpointNumber = checkpoint.key();
 
                     if (gamePlayer.checkpointNumber() >= checkpointNumber)
                         return;
 
-                    long now = System.currentTimeMillis();
-
-                    player.setRespawnPoint(checkpoint.value().add(0.5, 0, 0.5));
+                    player.setRespawnPoint(checkpoint.value().spawn().add(0.5, 0, 0.5));
                     playerList.getPlayersAsAudience().sendMessage(Component.text("{player} has reached checkpoint {checkpoint}!", NamedTextColor.GRAY)
                             .replaceText(builder ->
                                     builder.matchLiteral("{player}")
@@ -163,11 +176,11 @@ public final class RaceGameState extends EventGameState {
             };
     }
 
-    private static @Nullable Pair<Integer, Pos> findCheckpoint(Point playerPosition, Pos[] checkpoints) {
+    private static @Nullable Pair<Integer, Checkpoint> findCheckpoint(Point playerPosition, Checkpoint[] checkpoints) {
         for (int i = 0; i < checkpoints.length; i++) {
-            Pos checkpoint = checkpoints[i];
+            Checkpoint checkpoint = checkpoints[i];
 
-            if (playerPosition.sameBlock(checkpoint))
+            if (checkpoint.region().isInRegion(playerPosition))
                 return Pair.of(i + 1, checkpoint);
         }
 
@@ -178,7 +191,13 @@ public final class RaceGameState extends EventGameState {
     protected void onStateStart() {
         super.onStateStart();
         sidebars.forEach((_, sidebar) -> sidebar.updateStandings(playerList));
-        playerList.forEach(player -> player.player().setInvisible(true));
+        playerList.forEach(gamePlayer -> {
+            Player player = gamePlayer.player();
+            player.setInvisible(true);
+            player.getInventory().addItemStack(ItemStack.builder(Material.ENDER_EYE)
+                    .set(ITEM_ID, "warp")
+                    .build());
+        });
 
         this.timerTask = new TimerTask(900);
         taskManager.startTask(timerTask, TaskSchedule.immediate(), TaskSchedule.seconds(1));

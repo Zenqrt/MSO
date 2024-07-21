@@ -1,5 +1,6 @@
 package dev.zenqrt.mso.lobby.commands;
 
+import dev.zenqrt.mso.lobby.item.ItemRegistry;
 import dev.zenqrt.mso.text.Messages;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
@@ -19,6 +20,7 @@ public final class GamemodeCommand extends Command {
             GameMode gameMode = context.get(modeArgument);
 
             ((Player) sender).setGameMode(gameMode);
+            ((Player) sender).getInventory().addItemStack(ItemRegistry.RAINBOW_SHEEPINATOR.buildItemStack());
             sender.sendMessage(Messages.success("Set your game mode to " + gameMode.name().toLowerCase()));
         }, modeArgument);
     }

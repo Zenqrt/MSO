@@ -1,18 +1,28 @@
 package dev.zenqrt.mso.lobby;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.zenqrt.mso.lobby.block.handler.PlayerHeadBlockHandler;
 import dev.zenqrt.mso.lobby.commands.GamemodeCommand;
-import dev.zenqrt.mso.lobby.configuration.MSOLobbyConfig;
-import dev.zenqrt.mso.lobby.configuration.PodiumPlacementConfig;
+import dev.zenqrt.mso.lobby.commands.GiveRainbowCommand;
+import dev.zenqrt.mso.lobby.data.cache.CachedValues;
+import dev.zenqrt.mso.lobby.data.configuration.MSOLobbyConfig;
+import dev.zenqrt.mso.lobby.data.configuration.PodiumPlacementConfig;
 import dev.zenqrt.mso.lobby.entity.podium.PodiumNPC;
-import dev.zenqrt.mso.lobby.gson.deserializers.PosDeserializer;
-import dev.zenqrt.mso.lobby.gson.deserializers.VecDeserializer;
+import dev.zenqrt.mso.lobby.data.gson.deserializers.PosDeserializer;
+import dev.zenqrt.mso.lobby.data.gson.deserializers.VecDeserializer;
 import dev.zenqrt.mso.lobby.item.ItemRegistry;
+import dev.zenqrt.mso.lobby.messenger.responses.ScoreResponse;
 import dev.zenqrt.mso.lobby.podium.PodiumDisplay;
 import dev.zenqrt.mso.lobby.podium.PodiumHandler;
 import dev.zenqrt.mso.lobby.rainbowman.RainbowManHandler;
+import dev.zenqrt.mso.lobby.sidebar.SidebarManager;
+import dev.zenqrt.mso.messenger.Channels;
+import dev.zenqrt.mso.messenger.ConnectionSettings;
+import dev.zenqrt.mso.messenger.SingleChannelMessageReceiver;
+import dev.zenqrt.mso.messenger.rabbitmq.RabbitMQMessenger;
 import dev.zenqrt.mso.player.Players;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -32,16 +42,12 @@ import net.minestom.server.instance.anvil.AnvilLoader;
 import net.minestom.server.permission.Permission;
 import net.minestom.server.scoreboard.Team;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class MSOLobby {
 
@@ -60,6 +66,7 @@ public final class MSOLobby {
         instance.setGenerator(_ -> {});
 
         MinecraftServer.getCommandManager().register(new GamemodeCommand());
+        MinecraftServer.getCommandManager().register(new GiveRainbowCommand());
 
         Team adminTeam = MinecraftServer.getTeamManager().createTeam("admin");
         adminTeam.setPrefix(Component.text("ᴀᴅᴍɪɴ ", TextColor.color(0xeb2d2d)).decorate(TextDecoration.BOLD));
@@ -84,6 +91,7 @@ public final class MSOLobby {
         MinecraftServer.getBlockManager().registerHandler("minecraft:skull", PlayerHeadBlockHandler::new);
         ItemRegistry.registerItemEvents();
 
+
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(MSOLobby.class.getClassLoader().getResourceAsStream("map/config.json")))) {
             MSOLobbyConfig config = GSON.fromJson(reader, MSOLobbyConfig.class);
             RainbowManHandler rainbowManHandler = new RainbowManHandler(config.rainbowManSettings());
@@ -95,8 +103,62 @@ public final class MSOLobby {
                     createPodiumDisplay(instance, podiumPlacementConfigs.get(1), Component.text("2nd Place", NamedTextColor.GRAY).decorate(TextDecoration.BOLD)),
                     createPodiumDisplay(instance, podiumPlacementConfigs.get(2), Component.text("3rd Place", TextColor.color(0xB87333)).decorate(TextDecoration.BOLD))
             });
-            podiumHandler.init();
-            MinecraftServer.getGlobalEventHandler().addChild(podiumHandler.getEventNode());
+
+            SidebarManager sidebarManager = new SidebarManager();
+            sidebarManager.init(MinecraftServer.getGlobalEventHandler());
+
+            SingleChannelMessageReceiver infoChannelReceiver = RabbitMQMessenger.createReceiverWithId(Channels.INFO);
+            infoChannelReceiver.establishConnection(ConnectionSettings.HOST, ConnectionSettings.PORT);
+
+            ConnectionSettings.createMessageReceiveListener(infoChannelReceiver, data -> {
+                ByteArrayDataInput input = ByteStreams.newDataInput(data);
+                String line = input.readUTF();
+
+                switch (line) {
+                    case "scores" -> {
+                        List<ScoreResponse> responses = new ArrayList<>();
+
+                        while (true) {
+                            try {
+                                responses.add(ScoreResponse.read(input));
+                            } catch (RuntimeException exception) {
+                                if (!(exception.getCause() instanceof EOFException)) {
+                                    return;
+                                }
+
+                                break;
+                            }
+                        }
+
+                        podiumHandler.updatePodiums(responses.stream()
+                                .sorted(Comparator.comparing(ScoreResponse::score, (score, otherScore) -> Integer.compare(otherScore, score)))
+                                .limit(3)
+                                .toArray(ScoreResponse[]::new));
+
+                        responses.forEach(response -> {
+                            UUID uuid = response.uuid();
+                            int score = response.score();
+
+                            CachedValues.cacheScore(uuid, response.score());
+
+                            Player player = MinecraftServer.getConnectionManager().getOnlinePlayerByUuid(uuid);
+
+                            if (player == null)
+                                return;
+
+                            sidebarManager.getSidebar(uuid).updateScore(score);
+                        });
+                    }
+                    case "next_game" -> {
+                        String nextGame = input.readUTF();
+                        CachedValues.setNextGame(nextGame);
+
+                        sidebarManager.getSidebars().forEach((_, sidebar) -> sidebar.updateNextGame(nextGame));
+                    }
+                }
+            }).start();
+
+
         }
 
         server.start("127.0.0.1", 25565);

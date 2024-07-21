@@ -10,7 +10,7 @@ public final class LobbyCommand {
     public static BrigadierCommand createBrigadierCommand(RegisteredServer lobbyServer) {
         return new BrigadierCommand(
                 BrigadierCommand.literalArgumentBuilder("lobby")
-                        .requires(source -> source instanceof Player)
+                        .requires(source -> source instanceof Player && source.hasPermission("admin"))
                         .executes(context -> {
                             ConnectionUtils.connectTo(lobbyServer, (Player) context.getSource());
                             return 1;

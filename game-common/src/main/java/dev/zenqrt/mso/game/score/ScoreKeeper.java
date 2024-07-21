@@ -7,14 +7,15 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public final class ScoreKeeper {
 
-     private static final int FIRST_PLACE = 10;
-     private static final int SECOND_PLACE = 8;
-     private static final int THIRD_PLACE = 6;
+     private static final int FIRST_PLACE = 25;
+     private static final int SECOND_PLACE = 20;
+     private static final int THIRD_PLACE = 15;
      private final Map<UUID, Integer> scoresGained = new HashMap<>();
 
      public void addScore(UUID uuid, Audience audience, int score, String reason) {
@@ -23,10 +24,15 @@ public final class ScoreKeeper {
          audience.playSound(Sound.sound(Key.key("minecraft:entity.experience_orb.pickup"), Sound.Source.MASTER, 1, 2), Sound.Emitter.self());
      }
 
-     public void addPlacementScores(Map<Integer, GamePlayer> topPlayers) {
-         addPlacementScore(topPlayers.get(1), FIRST_PLACE, "1st");
-         addPlacementScore(topPlayers.get(2), SECOND_PLACE, "2nd");
-         addPlacementScore(topPlayers.get(3), THIRD_PLACE, "3rd");
+     public void addPlacementScores(List<GamePlayer> topPlayers) {
+         if (!topPlayers.isEmpty())
+             addPlacementScore(topPlayers.get(0), FIRST_PLACE, "1st");
+
+         if (topPlayers.size() >= 2)
+             addPlacementScore(topPlayers.get(1), SECOND_PLACE, "2nd");
+
+         if (topPlayers.size() >= 3)
+             addPlacementScore(topPlayers.get(2), THIRD_PLACE, "3rd");
      }
 
      public void addFirstPlaceScore(UUID uuid, Audience player) {

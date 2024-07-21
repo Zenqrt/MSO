@@ -1,6 +1,6 @@
 package dev.zenqrt.mso.lobby.rainbowman;
 
-import dev.zenqrt.mso.lobby.configuration.RainbowManConfig;
+import dev.zenqrt.mso.lobby.data.configuration.RainbowManConfig;
 import dev.zenqrt.mso.lobby.entity.NPC;
 import dev.zenqrt.mso.lobby.entity.NPCLookAt;
 import dev.zenqrt.mso.lobby.item.ItemRegistry;

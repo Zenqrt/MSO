@@ -5,7 +5,6 @@ import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.server.PingOptions;
 import dev.zenqrt.mso.proxy.game.MSOGame;
 import dev.zenqrt.mso.proxy.game.MSOTournamentGame;
-import dev.zenqrt.mso.proxy.game.state.states.IntermissionGameState;
 import dev.zenqrt.mso.text.Messages;
 
 import java.util.concurrent.TimeUnit;
@@ -16,7 +15,6 @@ public final class StartCommand {
         return new BrigadierCommand(
                 BrigadierCommand.literalArgumentBuilder("start")
                         .requires(source -> source.hasPermission("mso.command.start"))
-                        .requires(ignored -> game.getState() instanceof IntermissionGameState)
                         .executes(context -> {
                             CommandSource source = context.getSource();
                             source.sendMessage(Messages.action("Checking server status..."));

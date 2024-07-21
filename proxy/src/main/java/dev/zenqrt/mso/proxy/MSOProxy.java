@@ -37,18 +37,25 @@ public final class MSOProxy {
 
         RegisteredServer tntRunServer = findServer("tnt_run");
         RegisteredServer oitcServer = findServer("oitc");
+        RegisteredServer matchServer = findServer("match");
+        RegisteredServer spleefServer = findServer("spleef");
+        RegisteredServer parkourRaceServer = findServer("parkour_race");
 
         this.game = new MSOGame(this, findServer("lobby"), new MSOTournamentGame[]{
-                new MSOTournamentGame("Parkour Race", "parkour_race", findServer("parkour_race")),
-                new MSOTournamentGame("One in the Chamber (Round 1)", "oitc", oitcServer),
-                new MSOTournamentGame("Match", "match", findServer("match")),
-                new MSOTournamentGame("TNT Run (Round 1)", "tnt_run", tntRunServer),
-                new MSOTournamentGame("TNT Run (Round 2)", "tnt_run", tntRunServer),
-                new MSOTournamentGame("TNT Run (Round 3)", "tnt_run", tntRunServer),
-                new MSOTournamentGame("One in the Chamber (Round 2)", "oitc", oitcServer),
-                new MSOTournamentGame("One in the Chamber (Round 3)", "oitc", oitcServer),
-                new MSOTournamentGame("Survival Games (Round 1)", "survival_games", findServer("survival_games"))
+                createTournamentGame("TNT Run (R1)", tntRunServer),
+                createTournamentGame("TNT Run (R2)", tntRunServer),
+                createTournamentGame("TNT Run (R3)", tntRunServer),
+                createTournamentGame("One in the Chamber (R1)", oitcServer),
+                createTournamentGame("One in the Chamber (R2)", oitcServer),
+                createTournamentGame("Match", matchServer),
+                createTournamentGame("Spleef (R1)", spleefServer),
+                createTournamentGame("Spleef (R2)", spleefServer),
+                createTournamentGame("Parkour Race", parkourRaceServer)
         });
+    }
+
+    private MSOTournamentGame createTournamentGame(String displayName, RegisteredServer server) {
+        return new MSOTournamentGame(displayName, server.getServerInfo().getName(), server);
     }
 
     private RegisteredServer findServer(String serverName) {
@@ -64,9 +71,10 @@ public final class MSOProxy {
         CommandManager commandManager = server.getCommandManager();
         commandManager.register(LobbyCommand.createBrigadierCommand(game.getLobbyServer()));
         commandManager.register(JoinCommand.createBrigadierCommand(game));
-        commandManager.register(StatusCommand.createBrigadierCommand(game));
         commandManager.register(StartCommand.createBrigadierCommand(game));
-        commandManager.register(SetGameCommand.createBrigadierCommand(game));
+        commandManager.register(JoinAllCommand.createBrigadierCommand(this, game));
+        commandManager.register(GetScoresCommand.createBrigadierCommand(game));
+        commandManager.register(SetScoreCommand.createBrigadierCommand(server, game));
 
         logger.info("MSOProxy has initialized.");
     }

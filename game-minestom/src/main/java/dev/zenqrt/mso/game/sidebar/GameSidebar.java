@@ -3,7 +3,7 @@ package dev.zenqrt.mso.game.sidebar;
 import dev.zenqrt.mso.game.player.GamePlayerList;
 import dev.zenqrt.mso.game.player.MinestomGamePlayer;
 import dev.zenqrt.mso.game.score.ScoreKeeper;
-import dev.zenqrt.mso.game.utils.Texts;
+import dev.zenqrt.mso.sidebar.SidebarTexts;
 import dev.zenqrt.mso.text.Icons;
 import it.unimi.dsi.fastutil.Pair;
 import net.kyori.adventure.text.Component;
@@ -17,15 +17,18 @@ import java.util.List;
 
 public final class GameSidebar extends Sidebar {
 
-    public GameSidebar(@NotNull Component title) {
+    public GameSidebar(@NotNull Component title, String mapName) {
         super(title.decorate(TextDecoration.BOLD));
 
-        createLine(new Sidebar.ScoreboardLine("leaderboard_header", Component.text("ʀᴏᴜɴᴅ sᴄᴏʀᴇ", NamedTextColor.LIGHT_PURPLE), 5));
-        createLine(new Sidebar.ScoreboardLine("first_place", getEmptyLeaderboardComponent(1), 4));
-        createLine(new Sidebar.ScoreboardLine("second_place", getEmptyLeaderboardComponent(2), 3));
-        createLine(new Sidebar.ScoreboardLine("third_place", getEmptyLeaderboardComponent(3), 2));
+        createLine(new ScoreboardLine("map", Component.text("ᴍᴀᴘ: ", NamedTextColor.LIGHT_PURPLE)
+                .append(Component.text(mapName, NamedTextColor.WHITE)), 7));
+        createLine(new ScoreboardLine("empty1", Component.empty(), 6));
+        createLine(new ScoreboardLine("leaderboard_header", Component.text("ʀᴏᴜɴᴅ sᴄᴏʀᴇ", NamedTextColor.LIGHT_PURPLE), 5));
+        createLine(new ScoreboardLine("first_place", getEmptyLeaderboardComponent(1), 4));
+        createLine(new ScoreboardLine("second_place", getEmptyLeaderboardComponent(2), 3));
+        createLine(new ScoreboardLine("third_place", getEmptyLeaderboardComponent(3), 2));
         createLine(new ScoreboardLine("empty2", Component.empty(), 1));
-        createLine(new ScoreboardLine("player_score", Texts.playerScore(0), 0));
+        createLine(new ScoreboardLine("player_score", SidebarTexts.playerScore(0), 0));
     }
 
     public void updateLeaderboard(GamePlayerList<? extends MinestomGamePlayer> playerList, ScoreKeeper scoreKeeper) {
@@ -51,11 +54,11 @@ public final class GameSidebar extends Sidebar {
     }
 
     private static Component getEmptyLeaderboardComponent(int placement) {
-        return Texts.placement(placement, Component.text("...", NamedTextColor.DARK_GRAY));
+        return SidebarTexts.placement(placement, Component.text("...", NamedTextColor.DARK_GRAY));
     }
 
     private static Component getLeaderboardComponent(int placement, Pair<String, Integer> playerInfo) {
-        return Texts.placement(
+        return SidebarTexts.placement(
                 placement,
                 Component.text(playerInfo.key(), NamedTextColor.WHITE)
                         .append(Component.text(" - ", NamedTextColor.DARK_GRAY))
@@ -65,6 +68,6 @@ public final class GameSidebar extends Sidebar {
     }
 
     public void updateScore(int score) {
-        updateLineContent("player_score", Texts.playerScore(score));
+        updateLineContent("player_score", SidebarTexts.playerScore(score));
     }
 }

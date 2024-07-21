@@ -65,6 +65,7 @@ public final class MinestomGameServer {
         URL worldUrl = Objects.requireNonNull(MinestomGameServer.class.getClassLoader().getResource("map/world"), "world folder");
         Instance instance = MinecraftServer.getInstanceManager().createInstanceContainer(new AnvilLoader(Path.of(worldUrl.toURI())));
         instance.setGenerator(_ -> {});
+        instance.setTimeRate(0);
 
         JsonObject configJson;
 

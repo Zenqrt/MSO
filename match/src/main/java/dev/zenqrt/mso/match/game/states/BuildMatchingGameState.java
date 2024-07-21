@@ -1,6 +1,5 @@
 package dev.zenqrt.mso.match.game.states;
 
-import dev.zenqrt.mso.game.sidebar.GameSidebar;
 import dev.zenqrt.mso.game.state.EventGameState;
 import dev.zenqrt.mso.game.task.TaskManager;
 import dev.zenqrt.mso.match.game.MatchGame;
@@ -8,7 +7,9 @@ import dev.zenqrt.mso.match.game.board.Board;
 import dev.zenqrt.mso.match.game.board.Build;
 import dev.zenqrt.mso.match.game.map.MatchSectionArea;
 import dev.zenqrt.mso.match.game.player.MatchPlayer;
+import dev.zenqrt.mso.match.game.sidebar.MatchSidebar;
 import dev.zenqrt.mso.match.utils.coordinate.Region;
+import it.unimi.dsi.fastutil.Pair;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
@@ -23,9 +24,11 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.player.PlayerBlockBreakEvent;
 import net.minestom.server.event.player.PlayerBlockPlaceEvent;
+import net.minestom.server.event.player.PlayerStartDiggingEvent;
 import net.minestom.server.event.trait.PlayerEvent;
 import net.minestom.server.instance.batch.AbsoluteBlockBatch;
 import net.minestom.server.instance.block.Block;
+import net.minestom.server.inventory.PlayerInventory;
 import net.minestom.server.inventory.TransactionOption;
 import net.minestom.server.item.ItemStack;
 import net.minestom.server.item.Material;
@@ -33,15 +36,16 @@ import net.minestom.server.timer.TaskSchedule;
 import net.minestom.server.utils.validate.Check;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class BuildMatchingGameState extends EventGameState {
 
     private final MatchGame game;
     private final Build[] builds;
-    private final Map<Player, GameSidebar> sidebars;
+    private final Map<Player, MatchSidebar> sidebars;
     private final TaskManager taskManager;
 
-    public BuildMatchingGameState(MatchGame game, Build[] builds, Map<Player, GameSidebar> sidebars) {
+    public BuildMatchingGameState(MatchGame game, Build[] builds, Map<Player, MatchSidebar> sidebars) {
         super(game.getEventNode());
 
         this.game = game;
@@ -67,13 +71,12 @@ public final class BuildMatchingGameState extends EventGameState {
     @Override
     protected void onStateStart() {
         super.onStateStart();
-        taskManager.startTask(new TimerTask(60), TaskSchedule.immediate(), TaskSchedule.seconds(1));
+        taskManager.startTask(new TimerTask(300), TaskSchedule.immediate(), TaskSchedule.seconds(1));
 
         game.getPlayerList().forEach(gamePlayer -> {
             Player player = gamePlayer.player();
 
             player.setGameMode(GameMode.SURVIVAL);
-            player.setInstantBreak(true);
         });
 
     }
@@ -81,6 +84,11 @@ public final class BuildMatchingGameState extends EventGameState {
     @Override
     protected void onStateEnd() {
         super.onStateEnd();
+
+        game.getScoreKeeper().addPlacementScores(game.getPlayerList().getPlayers().values().stream()
+                .sorted(Comparator.comparing(MatchPlayer::buildsCompleted, (self, other) -> Integer.compare(other, self)))
+                .collect(Collectors.toList()));
+
         taskManager.shutdownAllTasks();
         game.getPlayerList().forEach(gamePlayer -> gamePlayer.player().setInstantBreak(false));
 
@@ -169,21 +177,24 @@ public final class BuildMatchingGameState extends EventGameState {
         private EventNode<PlayerEvent> createEventNode() {
             EventNode<PlayerEvent> eventNode = EventNode.type(player.getUsername(), EventFilter.PLAYER, (_, p) -> p.getUuid() == player.getUuid());
 
-            eventNode.addListener(EventListener.builder(PlayerBlockBreakEvent.class)
-                    .handler(event -> {
-                        if (isNotInPlacementBoard(event.getBlockPosition(), placementBoard)) {
-                            event.setCancelled(true);
-                            return;
-                        }
+            eventNode.addListener(PlayerStartDiggingEvent.class, event -> {
+                if (isNotInPlacementBoard(event.getBlockPosition(), placementBoard)) {
+                    event.setCancelled(true);
+                    return;
+                }
 
-                        Material blockMaterial = Material.fromNamespaceId(event.getBlock().namespace());
+                Material blockMaterial = Material.fromNamespaceId(event.getBlock().namespace());
 
-                        if (blockMaterial == null)
-                            return;
+                if (blockMaterial == null)
+                    return;
 
-                        event.getPlayer().getInventory().addItemStack(ItemStack.of(blockMaterial));
-                        blocksPlaced--;
-                    }).build());
+                event.getInstance().setBlock(event.getBlockPosition(), Block.AIR);
+
+                Player player = event.getPlayer();
+                player.getInventory().addItemStack(ItemStack.of(blockMaterial));
+                blocksPlaced--;
+            });
+            eventNode.addListener(PlayerBlockBreakEvent.class, event -> event.setCancelled(true));
             eventNode.addListener(EventListener.builder(PlayerBlockPlaceEvent.class)
                     .handler(event -> {
                         Point position = event.getBlockPosition();
@@ -198,22 +209,51 @@ public final class BuildMatchingGameState extends EventGameState {
                         if (++blocksPlaced == boardArea && Arrays.equals(placementBoard.getPlacedBlockIds(), displayBoard.getPlacedBlockIds())) {
                             MinecraftServer.getSchedulerManager().scheduleNextTick(this::completeBoard);
                         }
+
+                        PlayerInventory inventory = event.getPlayer().getInventory();
+                        Player.Hand hand = event.getHand();
+
+                        if (inventory.getItemInHand(hand).amount() == 1) {
+                            Pair<Integer, ItemStack> itemResult = getFirstItemOutsideOfHotbar(inventory);
+
+                            if (itemResult == null)
+                                return;
+
+                            MinecraftServer.getSchedulerManager().scheduleNextTick(() -> {
+                                inventory.setItemStack(itemResult.key(), ItemStack.AIR);
+                                inventory.setItemInHand(hand, itemResult.value());
+                            });
+                        }
                     }).build());
 
             return eventNode;
+        }
+
+        private static Pair<Integer, ItemStack> getFirstItemOutsideOfHotbar(PlayerInventory inventory) {
+            for (int i = 9; i < inventory.getInnerSize(); i++) {
+                ItemStack itemStack = inventory.getItemStack(i);
+
+                if (!itemStack.isAir())
+                    return Pair.of(i, itemStack);
+            }
+
+            return null;
         }
 
         private void completeBoard() {
             clearPlacementBoard();
             player.getInventory().clear();
 
-            game.getScoreKeeper().addScore(player.getUuid(), player, 1, "Build completed");
+            game.getScoreKeeper().addScore(player.getUuid(), player, 5, "Build completed");
 
             UUID uuid = player.getUuid();
-            game.getPlayerList().updatePlayer(uuid, MatchPlayer::addBuildsCompleted);
+            MatchPlayer updatedPlayer = game.getPlayerList().updatePlayer(uuid, MatchPlayer::addBuildsCompleted);
 
-            GameSidebar sidebar = sidebars.get(player);
+            MatchSidebar sidebar = sidebars.get(player);
+            sidebar.updateBuildsCompleted(updatedPlayer.buildsCompleted());
             sidebar.updateScore(game.getScoreKeeper().getScore(uuid));
+
+            sidebars.forEach((_, sb) -> sb.updateLeaderboard(game.getPlayerList()));
 
             if (++currentBuildIndex >= builds.length)
                 currentBuildIndex = 0;

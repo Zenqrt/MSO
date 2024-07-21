@@ -2,9 +2,9 @@ package dev.zenqrt.mso.oitc.game;
 
 import dev.zenqrt.mso.game.MinestomGame;
 import dev.zenqrt.mso.game.player.HashMapGamePlayerList;
-import dev.zenqrt.mso.game.sidebar.GameSidebar;
 import dev.zenqrt.mso.game.state.GameState;
 import dev.zenqrt.mso.game.state.GameStateSequence;
+import dev.zenqrt.mso.game.state.StatisticShowcaseGameState;
 import dev.zenqrt.mso.game.state.pregame.ConfigureIncomingPlayersGameState;
 import dev.zenqrt.mso.game.state.pregame.DisplaySidebarGameState;
 import dev.zenqrt.mso.game.state.pregame.MinestomPregameGameState;
@@ -12,8 +12,7 @@ import dev.zenqrt.mso.oitc.game.map.OneInTheChamberConfig;
 import dev.zenqrt.mso.oitc.game.player.OneInTheChamberPlayer;
 import dev.zenqrt.mso.oitc.game.states.BattleGameState;
 import dev.zenqrt.mso.oitc.game.states.pregame.NoMovementGameState;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import dev.zenqrt.mso.oitc.sidebar.OneInTheChamberSidebar;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
@@ -27,7 +26,7 @@ public final class OneInTheChamberGame extends MinestomGame<OneInTheChamberPlaye
 
     private final OneInTheChamberConfig config;
     private final AtomicInteger availableSpawnIndex;
-    private final Map<Player, GameSidebar> sidebars = new HashMap<>();
+    private final Map<Player, OneInTheChamberSidebar> sidebars = new HashMap<>();
 
     public OneInTheChamberGame(Instance instance, OneInTheChamberConfig config) {
         super(instance, new HashMapGamePlayerList<>());
@@ -47,11 +46,12 @@ public final class OneInTheChamberGame extends MinestomGame<OneInTheChamberPlaye
                     player.setRespawnPoint(spawnPosition);
                 }))
                 .addState(new DisplaySidebarGameState<>(getEventNode(), getPlayerList(), sidebars,
-                        () -> new GameSidebar(Component.text("ᴏɴᴇ ɪɴ ᴛʜᴇ ᴄʜᴀᴍʙᴇʀ", NamedTextColor.YELLOW))))
+                        () -> new OneInTheChamberSidebar("Mystical Thing")))
                 .addState(new NoMovementGameState(getEventNode()))
                 .build();
 
         sequence.addState(pregame);
         sequence.addState(new BattleGameState(getEventNode(), getInstance(), getPlayerList(), config, getScoreKeeper(), sidebars));
+        sequence.addState(new StatisticShowcaseGameState(getPlayerList(), getScoreKeeper()));
     }
 }

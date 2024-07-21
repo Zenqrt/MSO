@@ -1,6 +1,6 @@
 # This is a world configuration file for Paper.
 # This file may start empty but can be filled with settings to override ones in the config/paper-world-defaults.yml
 # 
-# World: intermission_lobby (minecraft:intermission_lobby)
+# World: lobby_2 (minecraft:lobby_2)
 
 _version: 31

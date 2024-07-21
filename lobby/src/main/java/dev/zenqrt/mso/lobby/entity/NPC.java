@@ -97,7 +97,10 @@ public class NPC extends Entity {
             PacketUtils.broadcastPlayPacket(removePlayerPacket);
             this.sendPacketToViewers(destroyEntitiesPacket);
             PacketUtils.broadcastPlayPacket(addPlayerPacket);
-            this.teleport(this.getPosition());
+
+            if (currentChunk.isLoaded()) {
+                this.teleport(this.getPosition());
+            }
         }
     }
 

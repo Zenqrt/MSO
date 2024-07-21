@@ -18,6 +18,8 @@
         <module>match</module>
         <module>oitc</module>
         <module>parkour_race</module>
+        <module>survival_games</module>
+        <module>spleef</module>
     </modules>
 
     <properties>

@@ -5,7 +5,7 @@ import java.util.Set;
 public final class Players {
 
     private static final Set<String> ADMINS = Set.of("Walmqrt");
-    private static final Set<String> EXCLUDED = Set.of();
+    private static final Set<String> EXCLUDED = Set.of("Walmqrt");
 
     private Players() {}
 

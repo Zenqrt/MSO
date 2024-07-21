@@ -2,11 +2,11 @@ package dev.zenqrt.mso.oitc.game.states;
 
 import dev.zenqrt.mso.game.player.GamePlayerList;
 import dev.zenqrt.mso.game.score.ScoreKeeper;
-import dev.zenqrt.mso.game.sidebar.GameSidebar;
 import dev.zenqrt.mso.game.state.EventGameState;
 import dev.zenqrt.mso.game.task.TaskManager;
 import dev.zenqrt.mso.oitc.game.map.OneInTheChamberConfig;
 import dev.zenqrt.mso.oitc.game.player.OneInTheChamberPlayer;
+import dev.zenqrt.mso.oitc.sidebar.OneInTheChamberSidebar;
 import dev.zenqrt.mso.text.TextColorPresets;
 import io.github.togar2.pvp.entity.projectile.Arrow;
 import io.github.togar2.pvp.events.EntityPreDeathEvent;
@@ -16,6 +16,7 @@ import io.github.togar2.pvp.feature.CombatFeatures;
 import io.github.togar2.pvp.utils.CombatVersion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.title.Title;
 import net.minestom.server.MinecraftServer;
 import net.minestom.server.coordinate.Point;
@@ -30,6 +31,7 @@ import net.minestom.server.event.EventNode;
 import net.minestom.server.event.entity.EntityDamageEvent;
 import net.minestom.server.event.entity.projectile.ProjectileCollideWithBlockEvent;
 import net.minestom.server.event.inventory.InventoryPreClickEvent;
+import net.minestom.server.event.item.ItemDropEvent;
 import net.minestom.server.event.trait.EntityInstanceEvent;
 import net.minestom.server.instance.Instance;
 import net.minestom.server.inventory.PlayerInventory;
@@ -44,6 +46,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public final class BattleGameState extends EventGameState {
 
@@ -51,11 +54,11 @@ public final class BattleGameState extends EventGameState {
     private final GamePlayerList<OneInTheChamberPlayer> playerList;
     private final OneInTheChamberConfig config;
     private final ScoreKeeper scoreKeeper;
-    private final Map<Player, GameSidebar> sidebars;
+    private final Map<Player, OneInTheChamberSidebar> sidebars;
     private final TaskManager taskManager;
     private final EventNode<EntityInstanceEvent> combatEventNode;
 
-    public BattleGameState(EventNode<Event> parentNode, Instance instance, GamePlayerList<OneInTheChamberPlayer> playerList, OneInTheChamberConfig config, ScoreKeeper scoreKeeper, Map<Player, GameSidebar> sidebars) {
+    public BattleGameState(EventNode<Event> parentNode, Instance instance, GamePlayerList<OneInTheChamberPlayer> playerList, OneInTheChamberConfig config, ScoreKeeper scoreKeeper, Map<Player, OneInTheChamberSidebar> sidebars) {
         super(parentNode);
 
         this.instance = instance;
@@ -84,6 +87,7 @@ public final class BattleGameState extends EventGameState {
         });
         combatEventNode.addListener(PickupEntityEvent.class, event -> event.setCancelled(true));
         eventNode.addListener(InventoryPreClickEvent.class, event -> event.setCancelled(true));
+        eventNode.addListener(ItemDropEvent.class, event -> event.setCancelled(true));
         eventNode.addListener(EventListener.builder(EntityDamageEvent.class)
                 .handler(event -> {
                     Damage damage = event.getDamage();
@@ -125,6 +129,15 @@ public final class BattleGameState extends EventGameState {
                     else
                         inventory.addItemStack(ItemStack.of(Material.ARROW));
 
+                    if (damage.getSource() instanceof Player) {
+                        float newHealth = attacker.getHealth() + 5;
+
+                        if (newHealth > 20)
+                            attacker.setHealth(20);
+                        else
+                            attacker.setHealth(newHealth);
+                    }
+
                     UUID attackerUuid = attacker.getUuid();
                     String symbol = damage.getSource() instanceof Arrow ? "\uD83C\uDFF9" : "\uD83D\uDDE1";
                     playerList.getPlayersAsAudience().sendMessage(Component.text("{killer} " + symbol + " {killed}", NamedTextColor.RED)
@@ -134,11 +147,14 @@ public final class BattleGameState extends EventGameState {
                             .replaceText(builder ->
                                     builder.matchLiteral("{killed}")
                                             .replacement(target.getUsername())));
-                                playerList.updatePlayer(attackerUuid, OneInTheChamberPlayer::addKill);
 
-                    scoreKeeper.addScore(attackerUuid, attacker, 1, "Kill");
-                    sidebars.get(attacker).updateScore(scoreKeeper.getScore(attackerUuid));
-                    sidebars.forEach((_, sidebar) -> sidebar.updateLeaderboard(playerList, scoreKeeper));
+                    OneInTheChamberPlayer updatedPlayer = playerList.updatePlayer(attackerUuid, OneInTheChamberPlayer::addKill);
+                    scoreKeeper.addScore(attackerUuid, attacker, 5, "Kill");
+
+                    OneInTheChamberSidebar sidebar = sidebars.get(attacker);
+                    sidebar.updateScore(scoreKeeper.getScore(attackerUuid));
+                    sidebar.updatePlayerKills(updatedPlayer.kills());
+                    sidebars.forEach((_, sb) -> sb.updateLeaderboard(playerList));
 
                 }).build());
         eventNode.addListener(EntityPreDeathEvent.class, event -> {
@@ -152,7 +168,7 @@ public final class BattleGameState extends EventGameState {
     private void respawn(Player player) {
         player.setHealth(20);
         player.setArrowCount(0);
-        giveItems(player.getInventory());
+        player.getInventory().setItemStack(8, ItemStack.of(Material.ARROW));
 
         player.teleport(chooseBestSpawn());
         player.setGameMode(GameMode.ADVENTURE);
@@ -184,12 +200,20 @@ public final class BattleGameState extends EventGameState {
         super.onStateStart();
         instance.eventNode().addChild(combatEventNode);
         playerList.forEach(gamePlayer -> giveItems(gamePlayer.player().getInventory()));
+        taskManager.startTask(new TimerTask(300), TaskSchedule.immediate(), TaskSchedule.seconds(1));
     }
 
     @Override
     protected void onStateEnd() {
         super.onStateEnd();
+
+        scoreKeeper.addPlacementScores(playerList.getPlayers().values().stream()
+                .sorted(Comparator.comparing(OneInTheChamberPlayer::kills, (kills, otherKills) -> Integer.compare(otherKills, kills)))
+                .limit(3)
+                .collect(Collectors.toList()));
+
         instance.eventNode().removeChild(combatEventNode);
+        taskManager.shutdownAllTasks();
     }
 
     private class KillCamTask implements Runnable {
@@ -230,6 +254,41 @@ public final class BattleGameState extends EventGameState {
 
         void start() {
             task = taskManager.startTask(this, TaskSchedule.immediate(), TaskSchedule.seconds(1));
+        }
+    }
+
+    private class TimerTask implements Runnable {
+
+        private int timeLeft;
+
+        TimerTask(int time) {
+            this.timeLeft = time;
+        }
+
+        @Override
+        public void run() {
+            if (timeLeft <= 0) {
+                notifyEnd();
+                return;
+            }
+
+            playerList.forEach(gamePlayer -> {
+                Player player = gamePlayer.player();
+
+                if (player.getGameMode() == GameMode.SPECTATOR)
+                    return;
+
+                player.sendActionBar(Component.text(formatTime(timeLeft), TextColor.color(0xd6faff))
+                        .append(Component.text(" ⌚", NamedTextColor.GOLD)));
+            });
+            timeLeft--;
+        }
+
+        private static String formatTime(int time) {
+            int minutes = time / 60;
+            int seconds = time % 60;
+
+            return "%d:%02d".formatted(minutes, seconds);
         }
     }
 }
